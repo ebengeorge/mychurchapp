@@ -10,7 +10,7 @@ public class WebController {
 		return "login";
 	}
 
-	@GetMapping("/welcome")
+	@GetMapping("/Dashboard")
 	public String welcome(Model model) {
 		return "index";
 	}
