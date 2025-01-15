@@ -168,7 +168,7 @@
            <div class="media-body">
             <p class="text-sm">Logged In</p>
               <h3 class="dropdown-item-title">
-                ${sessionScope.userId}
+                ${sessionScope.userName}
               </h3>
               <p class="text-sm text-muted"> Admin | Org Name</p>
             </div>
@@ -176,7 +176,7 @@
         </span>
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer" onclick="submitLogout()">Logout</a>
-          <form id="logoutform" action="/user/logout" method="POST">
+          <form id="logoutform" action="logout" method="POST">
             <input type="hidden" name="userId" value='${sessionScope.userId}'>
           </form>
         </div>

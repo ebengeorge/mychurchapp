@@ -6,3 +6,12 @@ function submitLogout() {
     });
     form.submit();
   }
+
+  $(function() {
+    $( document ).ready(function() {
+      if($("#loginerr").val().trim() != "") {
+        toastr.error($("#loginerr").val().trim());
+      }
+    });    
+  });
+  
