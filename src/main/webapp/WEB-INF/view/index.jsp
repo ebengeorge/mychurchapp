@@ -158,15 +158,28 @@
           <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
         </div>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-          <i class="fas fa-expand-arrows-alt"></i>
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-user"></i>
         </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
-        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <span class="dropdown-item dropdown-header">
+          <div class="media">
+           <div class="media-body">
+            <p class="text-sm">Logged In</p>
+              <h3 class="dropdown-item-title">
+                ${sessionScope.userName}
+              </h3>
+              <p class="text-sm text-muted"> Admin | Org Name</p>
+            </div>
+          </div>
+        </span>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer" onclick="submitLogout()">Logout</a>
+          <form id="logoutform" action="logout" method="POST">
+            <input type="hidden" name="userId" value='${sessionScope.userId}'>
+          </form>
+        </div>
       </li>
     </ul>
   </nav>
@@ -1502,5 +1515,7 @@
 <script src="dist/js/demo.js"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="dist/js/pages/dashboard.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>
