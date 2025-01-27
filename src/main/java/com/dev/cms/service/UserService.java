@@ -1,5 +1,6 @@
 package com.dev.cms.service;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +17,7 @@ public interface UserService extends JpaRepository<User, Integer>{
         "    u.username,\n" + //
         "    u.email,\n" + //
         "    u.password,\n" + //
-        "    u.createdOn) from User u where u.email = ?1")
+        "    u.createdOn, u.role, u.isActive, u.org) from User u where u.email = ?1")
 List<User> findByEmailId(String username);
 
 }

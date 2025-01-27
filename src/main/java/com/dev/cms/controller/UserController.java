@@ -3,7 +3,10 @@ package com.dev.cms.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.cms.model.User;
@@ -21,5 +24,11 @@ public class UserController {
     @GetMapping("/api/user/find")
     public List<User> findById(String emailId){
         return userService.findByEmailId(emailId);
+    }
+    @PostMapping("/api/user")
+    public User save(@RequestBody User user)
+    {
+        System.out.println("Working");
+        return userService.save(user);
     }
 }
