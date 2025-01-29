@@ -115,4 +115,9 @@ public class User {
         this.isActive = isActive;
         this.org = org;
     }
+
+    public User() {
+    }
+
+    
 }

@@ -30,6 +30,11 @@ public class WebController {
 		return "index";
 	}
 
+	@GetMapping("/error")
+	public String error(Model model, HttpSession session) {
+		return "error";
+	}
+
 
 	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String authenticate(Model model, HttpSession session, @RequestParam String userId, @RequestParam String pwd) {
@@ -40,6 +45,8 @@ public class WebController {
 				System.out.println("successfully logged in " + userId);
 				session.setAttribute("userId", userId);
 				session.setAttribute("userName", users.get(0).getUsername());
+				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
+				session.setAttribute("role", users.get(0).getRole());
 				return "index";
 			}
 		} 

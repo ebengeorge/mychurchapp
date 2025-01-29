@@ -3,7 +3,6 @@ package com.dev.cms.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,8 +25,7 @@ public class UserController {
         return userService.findByEmailId(emailId);
     }
     @PostMapping("/api/user")
-    public User save(@RequestBody User user)
-    {
+    public User save(@RequestBody User user){
         System.out.println("Working");
         return userService.save(user);
     }

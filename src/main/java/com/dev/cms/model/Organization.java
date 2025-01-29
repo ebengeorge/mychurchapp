@@ -7,12 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-
 @Table(name = "organization")
 public class Organization {
     @Id
@@ -94,5 +88,12 @@ public class Organization {
         this.address = address;
         this.users = users;
     }
+
+    public Organization() {
+ 
+    }
+
+
+    
 }
 
