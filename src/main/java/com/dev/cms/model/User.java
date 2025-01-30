@@ -1,7 +1,6 @@
 package com.dev.cms.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
@@ -104,20 +103,4 @@ public class User {
         this.org = org;
     }
 
-
-    public User(Integer id, String username, String email, String password, Instant createdOn, String role, Byte isActive, Organization org) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.createdOn = createdOn;
-        this.role = role;
-        this.isActive = isActive;
-        this.org = org;
-    }
-
-    public User() {
-    }
-
-    
 }

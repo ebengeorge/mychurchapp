@@ -3,14 +3,12 @@ package com.dev.cms.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.time.Instant;
 
 @Entity
 @Table(name = "organization")
 public class Organization {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "org_id", nullable = false)
     private Integer id;
 
@@ -21,16 +19,13 @@ public class Organization {
     @Column(name = "is_exclusive")
     private Byte isExclusive;
 
-    @ColumnDefault("'CURRENT_TIMESTAMP'")
-    @Column(name = "created_on", length = 45)
-    private String createdOn;
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created_on")
+    private Instant createdOn;
 
     @Lob
     @Column(name = "address")
     private String address;
-
-    @OneToMany(mappedBy = "org")
-    private Set<User> users = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -56,11 +51,11 @@ public class Organization {
         this.isExclusive = isExclusive;
     }
 
-    public String getCreatedOn() {
+    public Instant getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(String createdOn) {
+    public void setCreatedOn(Instant createdOn) {
         this.createdOn = createdOn;
     }
 
@@ -72,28 +67,4 @@ public class Organization {
         this.address = address;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public Organization(Integer id, String orgName, Byte isExclusive, String createdOn, String address, Set<User> users) {
-        this.id = id;
-        this.orgName = orgName;
-        this.isExclusive = isExclusive;
-        this.createdOn = createdOn;
-        this.address = address;
-        this.users = users;
-    }
-
-    public Organization() {
- 
-    }
-
-
-    
 }
-
