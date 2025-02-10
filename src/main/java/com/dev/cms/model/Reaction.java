@@ -1,6 +1,7 @@
 package com.dev.cms.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
@@ -22,6 +23,7 @@ public class Reaction {
     @Column(name = "reaction_type", nullable = false)
     private String reactionType;
 
+    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
     private Instant createdAt;
 

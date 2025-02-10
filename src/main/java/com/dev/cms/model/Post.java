@@ -31,6 +31,18 @@ public class Post {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "team_id", nullable = false)
+    private Team team;
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
     public Integer getId() {
         return id;
     }
