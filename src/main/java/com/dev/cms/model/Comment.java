@@ -12,11 +12,13 @@ public class Comment {
     @Column(name = "comment_id", nullable = false)
     private Integer id;
 
-    @Column(name = "post_id", nullable = false, length = 45)
-    private String postId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @Column(name = "user_id", nullable = false, length = 45)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Lob
     @Column(name = "content", nullable = false)
@@ -36,20 +38,20 @@ public class Comment {
         this.id = id;
     }
 
-    public String getPostId() {
-        return postId;
+    public Post getPost() {
+        return post;
     }
 
-    public void setPostId(String postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getContent() {

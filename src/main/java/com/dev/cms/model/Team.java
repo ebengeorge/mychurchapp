@@ -1,7 +1,6 @@
 package com.dev.cms.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "teams")
@@ -22,7 +21,6 @@ public class Team {
     @JoinColumn(name = "org_id", nullable = false)
     private Organization org;
 
-    @ColumnDefault("0")
     @Column(name = "is_default")
     private Byte isDefault;
 

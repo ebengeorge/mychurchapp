@@ -20,8 +20,9 @@ public class Post {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "author_id", nullable = false)
-    private Integer authorId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
@@ -34,14 +35,6 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "team_id", nullable = false)
     private Team team;
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
 
     public Integer getId() {
         return id;
@@ -67,12 +60,12 @@ public class Post {
         this.content = content;
     }
 
-    public Integer getAuthorId() {
-        return authorId;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setAuthorId(Integer authorId) {
-        this.authorId = authorId;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public Instant getCreatedAt() {
@@ -89,6 +82,14 @@ public class Post {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
 }

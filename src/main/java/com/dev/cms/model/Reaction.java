@@ -13,11 +13,13 @@ public class Reaction {
     @Column(name = "reaction_id", nullable = false)
     private Integer id;
 
-    @Column(name = "post_id", nullable = false, length = 45)
-    private String postId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @Column(name = "users_id", nullable = false, length = 45)
-    private String usersId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Lob
     @Column(name = "reaction_type", nullable = false)
@@ -35,20 +37,20 @@ public class Reaction {
         this.id = id;
     }
 
-    public String getPostId() {
-        return postId;
+    public Post getPost() {
+        return post;
     }
 
-    public void setPostId(String postId) {
-        this.postId = postId;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
-    public String getUsersId() {
-        return usersId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUsersId(String usersId) {
-        this.usersId = usersId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getReactionType() {

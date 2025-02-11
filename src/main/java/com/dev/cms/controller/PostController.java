@@ -16,7 +16,7 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping
+    @PostMapping("/save")
     public Post savePost(@RequestBody Post post) {
         return postService.save(post);
     }

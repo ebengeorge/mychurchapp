@@ -16,7 +16,7 @@ public class ReactionController {
         this.reactionService = reactionService;
     }
 
-    @PostMapping
+    @PostMapping("/save")
     public Reaction saveReaction(@RequestBody Reaction reaction) {
         return reactionService.save(reaction);
     }
