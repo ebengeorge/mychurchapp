@@ -170,7 +170,7 @@
               <h3 class="dropdown-item-title">
                 ${sessionScope.userName}
               </h3>
-              <p class="text-sm text-muted"> Admin | Org Name</p>
+              <p class="text-sm text-muted"><span style="text-transform: capitalize"> ${role}</span> |  ${sessionScope.orgName}</p>
             </div>
           </div>
         </span>

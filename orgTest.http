@@ -1,0 +1,10 @@
+### Send POST request with json body
+POST http://localhost:8000/api/org/save
+Content-Type: application/json
+
+{
+  "orgName":"agape9",
+  "isExclusive":0,
+  "createdOn":"2025-01-29T09:24:20.985Z",
+  "address": "Burnage"
+}
