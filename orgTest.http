@@ -8,3 +8,7 @@ Content-Type: application/json
   "createdOn":"2025-01-29T09:24:20.985Z",
   "address": "Burnage"
 }
+
+### GET request with a header
+GET http://localhost:8000/api/org
+Accept: application/json

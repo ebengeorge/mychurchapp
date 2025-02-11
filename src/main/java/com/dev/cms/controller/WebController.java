@@ -35,6 +35,14 @@ public class WebController {
 		return "error";
 	}
 
+	@GetMapping("/organization")
+	public String organization(Model model, HttpSession session) {
+		if(session.getAttribute("userId") == null) {
+			return "redirect:/";
+		}
+		return "admin";
+	}
+
 
 	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String authenticate(Model model, HttpSession session, @RequestParam String userId, @RequestParam String pwd) {
@@ -47,6 +55,10 @@ public class WebController {
 				session.setAttribute("userName", users.get(0).getUsername());
 				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
 				session.setAttribute("role", users.get(0).getRole());
+				if(users.get(0).getOrg().getOrgName().equals("cms"))
+				{
+					return "redirect:/organization";
+				}
 				return "index";
 			}
 		} 

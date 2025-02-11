@@ -7,6 +7,7 @@ import com.dev.cms.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,6 +27,11 @@ public class OrgController {
     @GetMapping("/{id}")
     public Optional<Organization> getOrganization(@PathVariable int id) {
         return orgService.findById(id);
+    }
+
+    @GetMapping
+    public List<Organization> findAllOrganization() {
+        return orgService.findAll();
     }
 
     @PostMapping("/save")
