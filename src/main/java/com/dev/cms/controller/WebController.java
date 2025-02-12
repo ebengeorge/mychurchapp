@@ -63,10 +63,10 @@ public class WebController {
 				session.setAttribute("userName", users.get(0).getUsername());
 				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
 				session.setAttribute("role", users.get(0).getRole());
-				// if(users.get(0).getOrg().getOrgName().equals("cms"))
-				// {
-				// 	return "redirect:/organization";
-				// }
+				 if(users.get(0).getOrg().getOrgName().equals("cms"))
+				 {
+				 	return "redirect:/organization";
+				 }
 				return "redirect:/dashboard";
 			}
 		} 

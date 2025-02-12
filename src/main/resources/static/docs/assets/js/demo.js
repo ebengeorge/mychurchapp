@@ -590,12 +590,18 @@
   $container.append($sidebar_dark_variants)
 
   var active_sidebar_dark_color = null
-  $('.main-sidebar')[0].classList.forEach(function (className) {
-    var color = className.replace('sidebar-dark-', 'bg-')
-    if (sidebar_colors.indexOf(color) > -1 && active_sidebar_dark_color === null) {
-      active_sidebar_dark_color = color
-    }
-  })
+  try
+  {
+    $('.main-sidebar')[0].classList.forEach(function (className)
+        {
+          var color = className.replace('sidebar-dark-', 'bg-')
+          if (sidebar_colors.indexOf(color) > -1 && active_sidebar_dark_color === null) {
+            active_sidebar_dark_color = color
+          }
+        }
+    )
+  }
+  catch(err) {}
 
   $sidebar_dark_variants.find('option.' + active_sidebar_dark_color).prop('selected', true)
   $sidebar_dark_variants.removeClass().addClass('custom-select mb-3 text-light border-0 ').addClass(active_sidebar_dark_color)
@@ -623,13 +629,15 @@
   $container.append($sidebar_light_variants)
 
   var active_sidebar_light_color = null
-  $('.main-sidebar')[0].classList.forEach(function (className) {
-    var color = className.replace('sidebar-light-', 'bg-')
-    if (sidebar_colors.indexOf(color) > -1 && active_sidebar_light_color === null) {
-      active_sidebar_light_color = color
-    }
-  })
-
+  try {
+    $('.main-sidebar')[0].classList.forEach(function (className) {
+      var color = className.replace('sidebar-light-', 'bg-')
+      if (sidebar_colors.indexOf(color) > -1 && active_sidebar_light_color === null) {
+        active_sidebar_light_color = color
+      }
+    })
+  }
+  catch(err) {}
   if (active_sidebar_light_color !== null) {
     $sidebar_light_variants.find('option.' + active_sidebar_light_color).prop('selected', true)
     $sidebar_light_variants.removeClass().addClass('custom-select mb-3 text-light border-0 ').addClass(active_sidebar_light_color)

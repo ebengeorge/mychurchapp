@@ -1,5 +1,5 @@
 ### Send POST request with json body
-POST http://localhost:8000/api/org/save
+POST http://localhost:8000/api/org/id
 Content-Type: application/json
 
 {
@@ -10,5 +10,5 @@ Content-Type: application/json
 }
 
 ### GET request with a header
-GET http://localhost:8000/api/org
+GET http://localhost:8000/api/org/1
 Accept: application/json

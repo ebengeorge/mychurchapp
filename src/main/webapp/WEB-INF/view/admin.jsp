@@ -66,7 +66,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Manage Organizations</h3> <button type="button" class="btn btn-success btn-sm float-right">Add</button>
+                <h3 class="card-title">Manage Organizations</h3> <button type="button" class="btn btn-success btn-sm float-right" id="addBtn">Add</button>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -117,24 +117,43 @@
   <!-- /.control-sidebar -->
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
+<div class="modal fade" id="modal-xl">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+        <h4 class="modal-title" id="modal-header">Extra Large Modal</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
-        ...
+        <form id="orgSave">
+          <input type="hidden" id="id" name="id">
+          <input type="hidden" id="isExclusive" name="isExclusive" value ="0">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="orgName">Organization Name</label>
+              <input type="text" name="orgName" class="form-control" id="orgName" placeholder="Enter Organization Name">
+            </div>
+            <div class="form-group">
+              <label for="orgAddress">Address</label>
+              <input type="text" name="address" class="form-control" id="orgAddress" placeholder="Enter Address">
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </form>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
+    <!-- /.modal-content -->
   </div>
+  <!-- /.modal-dialog -->
 </div>
+<!-- /.modal -->
+
 
 <!-- ./wrapper -->
 
@@ -158,7 +177,7 @@
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
+<%--<script src="../../dist/js/demo.js"></script>--%>
 <script src="app.js"></script>
 <!-- Page specific script -->
 <script>
@@ -181,8 +200,28 @@
             }
           }
         ]
-      })
-    })
+      });
+      $(".edtBtn").click(function(){
+        $('#modal-xl').modal('show');
+        var orgId = $(this).attr("data-id");
+        $.ajax({
+          url: "/api/org/" +orgId,
+          type: 'GET',
+          dataType: 'json', // added data type
+          success: function(res) {
+            $('#modal-header').text(res.orgName);
+            $('#id').val(orgId);
+            $('#orgName').val(res.orgName);
+            $('#isExclusive').val("0");
+            $('#orgAddress').val(res.address);
+          }
+        });
+      });
+    });
+      $("#addBtn").click(function(){
+        $('#modal-xl').modal('show');
+        $('#modal-header').text('New Organization');
+      });
   });
 </script>
 </body>
