@@ -78,5 +78,14 @@
 <!-- Toastr -->
 <script src="../../plugins/toastr/toastr.min.js"></script>
 <script src="app.js"></script>
+<script>
+    $(function() {
+    $( document ).ready(function() {
+      if($("#loginerr").val().trim() != "") {
+        toastr.error($("#loginerr").val().trim());
+      }
+    });    
+  });
+</script>
 </body>
 </html>

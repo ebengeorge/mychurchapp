@@ -27,6 +27,14 @@ public class WebController {
 		if( null == session.getAttribute("userId")) {
 			return "login";
 		}
+		return "redirect:/dashboard";
+	}
+
+	@GetMapping("/dashboard")
+	public String dashboard(Model model, HttpSession session) {
+		if( null == session.getAttribute("userId")) {
+			return "login";
+		}
 		return "index";
 	}
 
@@ -55,11 +63,11 @@ public class WebController {
 				session.setAttribute("userName", users.get(0).getUsername());
 				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
 				session.setAttribute("role", users.get(0).getRole());
-				if(users.get(0).getOrg().getOrgName().equals("cms"))
-				{
-					return "redirect:/organization";
-				}
-				return "index";
+				// if(users.get(0).getOrg().getOrgName().equals("cms"))
+				// {
+				// 	return "redirect:/organization";
+				// }
+				return "redirect:/dashboard";
 			}
 		} 
 		model.addAttribute("message", "Invalid email/password, try again");

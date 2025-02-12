@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | DataTables</title>
+  <title>CMS | Admin Dashboard</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -66,7 +66,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">DataTable with minimal features & hover style</h3>
+                <h3 class="card-title">Manage Organizations</h3> <button type="button" class="btn btn-success btn-sm float-right">Add</button>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -107,10 +107,7 @@
   </div>
   <!-- /.content-wrapper -->
   <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>Version</b> 3.2.0
-    </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+  
   </footer>
 
   <!-- Control Sidebar -->
@@ -179,8 +176,8 @@
           { "data": "createdOn" },
           { "data": "id",
             render : function(data, type, row) {
-              return '<button type="button" class="btn btn-primary" data-id ="'+data+'">Edit</button>&nbsp' +
-                      '<button type="button" class="btn btn-danger" data-id ="'+data+'">Delete</button>'
+              return '<button type="button" class="btn btn-primary edtBtn" data-id ="'+data+'">Edit</button>&nbsp' +
+                      '<button type="button" class="btn btn-danger dltBtn" data-id ="'+data+'">Delete</button>'
             }
           }
         ]
