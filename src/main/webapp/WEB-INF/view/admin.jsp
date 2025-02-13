@@ -145,7 +145,7 @@
       </div>
       <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-primary" id="submitBtn">Save changes</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -201,6 +201,10 @@
           }
         ]
       });
+      $(".dltBtn").click(function(){
+        alert("123");
+        confirmationBox(something, $(this).attr("data-id"));
+      });
       $(".edtBtn").click(function(){
         $('#modal-xl').modal('show');
         var orgId = $(this).attr("data-id");
@@ -222,7 +226,56 @@
         $('#modal-xl').modal('show');
         $('#modal-header').text('New Organization');
       });
+
+    // this is the id of the form
+    $("#submitBtn").click(function() {
+
+      var form = $("#orgSave");
+
+      $.ajax({
+        type: "POST",
+        url:  "/api/org/save",
+        data: convertToJson("orgSave"),
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function(data)
+        {
+          $('#modal-xl').modal('hide');
+          $(document).Toasts('create', {
+            class: 'bg-success',
+            title: 'Success',
+            body: 'Changes saved Successfully',
+            autohide: true,
+            delay: 1500
+          })
+        }
+      });
+    });
   });
+  function something(orgId){
+    alert("orgId" + orgId);
+  }
 </script>
+<div class="modal fade" id="confirmationBox">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Default Modal</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to Proceed Now?</p>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" id="confirmationYes">Yes</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 </body>
 </html>

@@ -34,6 +34,11 @@ public class OrgController {
         return orgService.findAll();
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteOrganization(@PathVariable int id) {
+        orgService.deleteById(id);
+    }
+
     @PostMapping("/save")
     public Organization save(@RequestBody Organization org) {
         try {
