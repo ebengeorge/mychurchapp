@@ -1,9 +1,9 @@
 ### Send POST request with json body
-POST http://localhost:8000/api/org/id
+POST http://localhost:8080/api/org/id
 Content-Type: application/json
 
 {
-  "orgName":"agape9",
+  "orgName":"agape10",
   "isExclusive":0,
   "createdOn":"2025-01-29T09:24:20.985Z",
   "address": "Burnage"

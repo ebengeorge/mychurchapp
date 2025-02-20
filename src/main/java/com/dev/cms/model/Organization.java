@@ -9,7 +9,6 @@ import java.time.Instant;
 @Table(name = "organization")
 public class Organization {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "org_id", nullable = false)
     private Integer id;
 
@@ -27,6 +26,9 @@ public class Organization {
     @Lob
     @Column(name = "address")
     private String address;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     public Integer getId() {
         return id;
@@ -66,6 +68,14 @@ public class Organization {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
 }

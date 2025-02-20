@@ -154,6 +154,28 @@
 </div>
 <!-- /.modal -->
 
+<!-- confirmation box -->
+<div class="modal fade" id="confirmationBox">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Default Modal</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to Proceed Now?</p>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" id="confirmationYes">Yes</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 
 <!-- ./wrapper -->
 
@@ -182,64 +204,95 @@
 <!-- Page specific script -->
 <script>
   $(function () {
-    $.ajax({
-      'url': "/api/org",
-      'method': "GET",
-      'contentType': 'application/json'
-    }).done( function(data) {
-      $('#orgTable').dataTable( {
-        "aaData": data,
-        "columns": [
-          { "data": "orgName" },
-          { "data": "address" },
-          { "data": "createdOn" },
-          { "data": "id",
-            render : function(data, type, row) {
-              return '<button type="button" class="btn btn-primary edtBtn" data-id ="'+data+'">Edit</button>&nbsp' +
-                      '<button type="button" class="btn btn-danger dltBtn" data-id ="'+data+'">Delete</button>'
-            }
+    // Initialize the DataTable with AJAX loading
+    var table = $('#orgTable').DataTable({
+      ajax: {
+        url: "/api/org",
+        dataSrc: ""
+      },
+      columns: [
+        { data: "orgName" },
+        { data: "address" },
+        { data: "createdOn" },
+        {
+          data: "id",
+          render: function(data, type, row) {
+            return '<button type="button" class="btn btn-primary edtBtn" data-id="'+ data +'">Edit</button>&nbsp;' +
+                    '<button type="button" class="btn btn-danger dltBtn" data-id="'+ data +'">Delete</button>';
           }
-        ]
-      });
-      $(".dltBtn").click(function(){
-        alert("123");
-        confirmationBox(something, $(this).attr("data-id"));
-      });
-      $(".edtBtn").click(function(){
-        $('#modal-xl').modal('show');
-        var orgId = $(this).attr("data-id");
-        $.ajax({
-          url: "/api/org/" +orgId,
-          type: 'GET',
-          dataType: 'json', // added data type
-          success: function(res) {
-            $('#modal-header').text(res.orgName);
-            $('#id').val(orgId);
-            $('#orgName').val(res.orgName);
-            $('#isExclusive').val("0");
-            $('#orgAddress').val(res.address);
-          }
-        });
+        }
+      ]
+    });
+
+    // Delegate event for Edit buttons
+    $('#orgTable tbody').on('click', '.edtBtn', function() {
+      $('#modal-xl').modal('show');
+      var orgId = $(this).attr("data-id");
+      $.ajax({
+        url: "/api/org/" + orgId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(res) {
+          // Populate modal fields with the retrieved organization data
+          $('#modal-header').text(res.orgName);
+          $('#id').val(orgId);
+          $('#orgName').val(res.orgName);
+          $('#isExclusive').val("0");
+          $('#orgAddress').val(res.address);
+        }
       });
     });
-      $("#addBtn").click(function(){
-        $('#modal-xl').modal('show');
-        $('#modal-header').text('New Organization');
+
+    // Delegate event for Delete buttons (if needed)
+    $('#orgTable tbody').on('click', '.dltBtn', function() {
+      var orgId = $(this).attr("data-id");
+      confirmationBox(deleteOrganization, orgId);
+    });
+    function deleteOrganization(orgId) {
+      $.ajax({
+        url: "/api/org/" + orgId,  // Your delete endpoint
+        type: 'DELETE',
+        success: function(response) {
+          // Show a success toast
+          $(document).Toasts('create', {
+            class: 'bg-success',
+            title: 'Deleted',
+            body: 'Organization deleted successfully',
+            autohide: true,
+            delay: 1500
+          });
+          // Reload the DataTable to reflect the deletion
+          table.ajax.reload(null, false);
+        },
+        error: function(xhr, status, error) {
+          // Show an error toast in case of failure
+          $(document).Toasts('create', {
+            class: 'bg-danger',
+            title: 'Error',
+            body: 'Error deleting organization',
+            autohide: true,
+            delay: 1500
+          });
+        }
       });
+    }
 
-    // this is the id of the form
+    // Open modal for adding a new organization
+    $("#addBtn").click(function(){
+      $('#modal-xl').modal('show');
+      $('#modal-header').text('New Organization');
+      // Clear form fields if necessary...
+    });
+
+    // When the Save Changes button is clicked in the modal
     $("#submitBtn").click(function() {
-
-      var form = $("#orgSave");
-
       $.ajax({
         type: "POST",
-        url:  "/api/org/save",
-        data: convertToJson("orgSave"),
+        url: "/api/org/save",  // Ensure this URL matches your server-side update/save endpoint
+        data: convertToJson("orgSave"),  // convertToJson should serialize your form data appropriately
         dataType: 'json',
         contentType: 'application/json',
-        success: function(data)
-        {
+        success: function(data) {
           $('#modal-xl').modal('hide');
           $(document).Toasts('create', {
             class: 'bg-success',
@@ -247,35 +300,13 @@
             body: 'Changes saved Successfully',
             autohide: true,
             delay: 1500
-          })
+          });
+          // Reload the DataTable data without refreshing the entire page
+          table.ajax.reload(null, false);
         }
       });
     });
   });
-  function something(orgId){
-    alert("orgId" + orgId);
-  }
 </script>
-<div class="modal fade" id="confirmationBox">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Default Modal</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Do you want to Proceed Now?</p>
-      </div>
-      <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-        <button type="button" class="btn btn-primary" id="confirmationYes">Yes</button>
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
 </body>
 </html>

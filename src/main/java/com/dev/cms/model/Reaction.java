@@ -9,7 +9,6 @@ import java.time.Instant;
 @Table(name = "reactions")
 public class Reaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reaction_id", nullable = false)
     private Integer id;
 

@@ -19,11 +19,12 @@ function convertToJson(formId) {
     return JSON.stringify(formData);
 }
 
-function confirmationBox(fn, obj){
+// Generic confirmation box function
+function confirmationBox(callback, parameter) {
     $('#confirmationBox').modal('show');
-    $( "#confirmationYes" ).unbind();
-    alert(obj);
-    $("#confirmationYes").click(function(){
-       fn(obj);
+    $("#confirmationYes").off('click');
+    $("#confirmationYes").on('click', function(){
+        callback(parameter);
+        $('#confirmationBox').modal('hide');
     });
 }

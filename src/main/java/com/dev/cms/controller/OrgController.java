@@ -31,12 +31,12 @@ public class OrgController {
 
     @GetMapping
     public List<Organization> findAllOrganization() {
-        return orgService.findAll();
+        return orgService.findByIsActiveAndIsExclusive(Boolean.TRUE, (byte) 0);
     }
 
     @DeleteMapping("/{id}")
     public void deleteOrganization(@PathVariable int id) {
-        orgService.deleteById(id);
+        orgService.updateIsActiveById(id, false);
     }
 
     @PostMapping("/save")

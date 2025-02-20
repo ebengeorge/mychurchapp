@@ -59,6 +59,7 @@ public class WebController {
 		if (users != null && !users.isEmpty()){
 			if(users.get(0).getPassword().equals(pwd)){
 				System.out.println("successfully logged in " + userId);
+				System.out.println(users.get(0));
 				session.setAttribute("userId", userId);
 				session.setAttribute("userName", users.get(0).getUsername());
 				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
