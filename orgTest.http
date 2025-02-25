@@ -6,7 +6,8 @@ Content-Type: application/json
   "orgName":"agape10",
   "isExclusive":0,
   "createdOn":"2025-01-29T09:24:20.985Z",
-  "address": "Burnage"
+  "address": "Burnage",
+  "is_active" : 1
 }
 
 ### GET request with a header

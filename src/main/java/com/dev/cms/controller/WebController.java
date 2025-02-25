@@ -2,7 +2,9 @@ package com.dev.cms.controller;
 
 import java.util.List;
 
+import com.dev.cms.model.Post;
 import com.dev.cms.model.User;
+import com.dev.cms.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -21,6 +23,7 @@ import jakarta.servlet.http.HttpSession;
 public class WebController {
 	@Autowired
 	UserService userService;
+	PostService postService;
 
 	@GetMapping("/")
 	public String home(Model model, HttpSession session) {
@@ -73,6 +76,15 @@ public class WebController {
 		} 
 		model.addAttribute("message", "Invalid email/password, try again");
 		return "login";
+	}
+
+	@GetMapping("/timeline")
+	public String timeline(Model model, HttpSession session) {
+		if(session.getAttribute("userId") == null) {
+			return "redirect:/";
+		}
+		List<Post> posts = postService.findAll();
+		return "timeline";
 	}
 
 	@PostMapping(path = "/logout", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
