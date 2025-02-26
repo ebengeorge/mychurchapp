@@ -60,7 +60,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <!-- The timeline -->
-                        <div class="timeline">
+                        <div class="timeline" id="cmstimeline">
                             <!-- timeline time label -->
                             <div class="time-label">
                                 <span class="bg-red">10 Feb. 2014</span>
@@ -81,7 +81,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="postsContainer"></div>
                             <div>
                                 <i class="fas fa-clock bg-gray"></i>
                             </div>
@@ -205,7 +204,7 @@
         });
     });
     function renderTimelinePosts(posts) {
-        var container = $('#postsContainer'); // The container where posts will be rendered
+        var container = $('#cmstimeline'); // The container where posts will be rendered
         container.empty(); // Clear any existing content
 
         $.each(posts, function(index, post) {
@@ -231,13 +230,16 @@
             var authorLink = $('<a></a>')
                 .attr('href', '')
                 .text(post.author.username);
-            header.append(authorLink).append(' posted in');
+            header.append(authorLink).append(' posted in ' + post.team.name);
             timelineItem.append(header);
+
+            var postTxt = "<h3>"+post.title+"</h3><br><span>"+post.content+"</span>"
 
             // Create and append the timeline body
             var bodyDiv = $('<div></div>')
                 .addClass('timeline-body')
-                .html(post.body);
+                .html(postTxt);
+
             timelineItem.append(bodyDiv);
 
             // Create and append the footer with buttons

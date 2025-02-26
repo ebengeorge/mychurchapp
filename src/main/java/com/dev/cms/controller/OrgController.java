@@ -51,6 +51,10 @@ public class OrgController {
             team.setIsDefault(Byte.valueOf("1"));
             System.out.println(team);
             teamService.save(team);
+            //create default admin user here
+            //on ui make sure admin user is not in the form
+            // this field should be hidden for edit
+            // but send it as part of the request url not in the body
             return org;
         } catch (Exception e) {
            throw e;
