@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -83,24 +81,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <c:forEach var="post" items="${posts}">
-                                <div>
-                                    <i class="fas fa-envelope bg-blue"></i>
-                                    <div class="timeline-item">
-                                        <span class="time"><i class="fas fa-clock"></i> ${post.time}</span>
-                                        <h3 class="timeline-header">
-                                            <a href="">${post.author.username}</a> posted in 
-                                        </h3>
-                                        <div class="timeline-body">
-                                                ${post.body}
-                                        </div>
-                                        <div class="timeline-footer">
-                                            <a class="btn btn-primary btn-sm" href="${post.readMoreLink}">Read more</a>
-                                            <a class="btn btn-danger btn-sm" href="${post.deleteLink}">Delete</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
+                            <div id="postsContainer"></div>
                             <div>
                                 <i class="fas fa-clock bg-gray"></i>
                             </div>
@@ -181,6 +162,17 @@
 <script src="app.js"></script>
 <script>
     $(document).ready(function() {
+        $.ajax({
+            url: '/api/post/timeline',  // URL to your API endpoint
+            type: 'GET',
+            dataType: 'json',
+            success: function(posts) {
+                renderTimelinePosts(posts);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching posts:", error);
+            }
+        });
         // Attach a submit handler to the form in the modal
         $("#createPostModal form").submit(function(e) {
             e.preventDefault(); // Prevent the default form submission
@@ -212,6 +204,78 @@
             });
         });
     });
+    function renderTimelinePosts(posts) {
+        var container = $('#postsContainer'); // The container where posts will be rendered
+        container.empty(); // Clear any existing content
+
+        $.each(posts, function(index, post) {
+            // Create the outer div
+            var postDiv = $('<div></div>');
+
+            // Add envelope icon
+            postDiv.append($('<i></i>').addClass('fas fa-envelope bg-blue'));
+
+            // Create timeline item div
+            var timelineItem = $('<div></div>').addClass('timeline-item');
+
+            // Create and append the time span
+            var timeSpan = $('<span></span>')
+                .addClass('time')
+                .append($('<i></i>').addClass('fas fa-clock'))
+                .append(' ' + post.time);
+            timelineItem.append(timeSpan);
+
+            // Create and append the header with the author's username
+            var header = $('<h3></h3>')
+                .addClass('timeline-header');
+            var authorLink = $('<a></a>')
+                .attr('href', '')
+                .text(post.author.username);
+            header.append(authorLink).append(' posted in');
+            timelineItem.append(header);
+
+            // Create and append the timeline body
+            var bodyDiv = $('<div></div>')
+                .addClass('timeline-body')
+                .html(post.body);
+            timelineItem.append(bodyDiv);
+
+            // Create and append the footer with buttons
+            var footerDiv = $('<div></div>').addClass('timeline-footer');
+
+            var upvoteBtn = $('<a></a>')
+                .addClass('btn btn-success btn-sm')
+                .attr('href', '')
+                .append($('<i></i>').addClass('fa fa-thumbs-up'))
+                .append(' Upvote');
+
+            var downvoteBtn = $('<a></a>')
+                .addClass('btn btn-danger btn-sm')
+                .attr('href', '')
+                .append($('<i></i>').addClass('fa fa-thumbs-down'))
+                .append(' Downvote');
+
+            var commentBtn = $('<a></a>')
+                .addClass('btn btn-info btn-sm')
+                .attr('href', '')
+                .append($('<i></i>').addClass('fa fa-comment'))
+                .append(' Comment');
+
+            footerDiv.append(upvoteBtn)
+                .append(' ')
+                .append(downvoteBtn)
+                .append(' ')
+                .append(commentBtn);
+            timelineItem.append(footerDiv);
+
+            // Append the timeline item to the outer div
+            postDiv.append(timelineItem);
+
+            // Append the post to the container
+            container.append(postDiv);
+        });
+    }
+
 </script>
 </body>
 </html>
