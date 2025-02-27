@@ -1,0 +1,12 @@
+### Send POST request with json body
+POST http://localhost:8080/api/event/save
+Content-Type: application/json
+
+{
+  "title":"Practice",
+  "description":"Let's Practice",
+  "createdBy":1,
+  "team":{
+    "id":1
+  }
+}

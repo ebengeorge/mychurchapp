@@ -856,7 +856,7 @@
             <div class="sticky-top mb-3">
               <div class="card">
                 <div class="card-header">
-                  <h4 class="card-title">Draggable Events</h4>
+                  <h4 class="card-title">My Events</h4>
                 </div>
                 <div class="card-body">
                   <!-- the events -->
