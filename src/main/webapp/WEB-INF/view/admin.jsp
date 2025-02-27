@@ -117,6 +117,7 @@
   <!-- /.control-sidebar -->
 </div>
 
+<!-- Modal Structure -->
 <div class="modal fade" id="modal-xl">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
@@ -129,7 +130,7 @@
       <div class="modal-body">
         <form id="orgSave">
           <input type="hidden" id="id" name="id">
-          <input type="hidden" id="isExclusive" name="isExclusive" value ="0">
+          <input type="hidden" id="isExclusive" name="isExclusive" value="0">
           <div class="card-body">
             <div class="form-group">
               <label for="orgName">Organization Name</label>
@@ -138,6 +139,11 @@
             <div class="form-group">
               <label for="orgAddress">Address</label>
               <input type="text" name="address" class="form-control" id="orgAddress" placeholder="Enter Address">
+            </div>
+            <!-- Admin User field, initially hidden -->
+            <div class="form-group" id="adminUserField" style="display: none;">
+              <label for="adminUser">Admin User</label>
+              <input type="text" name="adminUser" class="form-control" id="adminUser" placeholder="Enter Admin User">
             </div>
           </div>
           <!-- /.card-body -->
@@ -224,9 +230,9 @@
       ]
     });
 
+
     // Delegate event for Edit buttons
     $('#orgTable tbody').on('click', '.edtBtn', function() {
-      $('#modal-xl').modal('show');
       var orgId = $(this).attr("data-id");
       $.ajax({
         url: "/api/org/" + orgId,
@@ -241,6 +247,8 @@
           $('#orgAddress').val(res.address);
         }
       });
+      $('#adminUserField').hide();
+      $('#modal-xl').modal('show');
     });
 
     // Delegate event for Delete buttons (if needed)
@@ -279,16 +287,37 @@
 
     // Open modal for adding a new organization
     $("#addBtn").click(function(){
-      $('#modal-xl').modal('show');
       $('#modal-header').text('New Organization');
-      // Clear form fields if necessary...
+      $('#adminUserField').show();
+      $('#modal-xl').modal('show');
+     });
+
+     $('#modal-xl').on('hidden.bs.modal', function () {
+     $('#orgSave input[type="text"]').val('');
+    
+    // Clear all hidden inputs
+    $('#orgSave input[type="hidden"]').val('');
+    
+    // Clear any select dropdowns
+    $('#orgSave select').val('').trigger('change');
+    
+    // Clear all checkboxes and radio buttons
+    $('#orgSave input[type="checkbox"], #orgSave input[type="radio"]').prop('checked', false);
+    
+    // If you have any textarea fields
+    $('#orgSave textarea').val('');
     });
+
 
     // When the Save Changes button is clicked in the modal
     $("#submitBtn").click(function() {
+      var apiUrl = "/api/org/save";
+      if ($('#adminUserField').is(":visible")) {
+        apiUrl = apiUrl + "?adminUserId="+ $('#adminUser').val();
+      }
       $.ajax({
         type: "POST",
-        url: "/api/org/save",  // Ensure this URL matches your server-side update/save endpoint
+        url: apiUrl,  // Ensure this URL matches your server-side update/save endpoint
         data: convertToJson("orgSave"),  // convertToJson should serialize your form data appropriately
         dataType: 'json',
         contentType: 'application/json',

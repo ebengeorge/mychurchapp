@@ -971,9 +971,8 @@ href=
 
 <!-- Page specific script -->
 <script>
-  $(function () {
-
-    const colorHexCodes = [
+$(function () {
+const colorHexCodes = [
     "#3498db",  // Bright Blue
     "#2ecc71",  // Emerald Green
     "#e74c3c",  // Red
@@ -991,92 +990,92 @@ href=
     "#d35400",  // Pumpkin Orange
     "#8e44ad",  // Violet
     "#34495e"   // Charcoal Blue
-  ];
+];
 
-
-
-    /* initialize the external events
-     -----------------------------------------------------------------*/
-  
-
-
-
-    var Calendar = FullCalendar.Calendar;
-    // var Draggable = FullCalendar.Draggable;
-
-    var containerEl = document.getElementById('external-events');
-    var calendarEl = document.getElementById('calendar');
-
-    // initialize the external events
-    // -----------------------------------------------------------------
-
-    // new Draggable(containerEl, {
-    //   itemSelector: '.external-event',
-    //   eventData: function(eventEl) {
-    //     return {
-    //       title: eventEl.innerText,
-    //       backgroundColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-    //       borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-    //       textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
-    //     };
-    //   }
-    // });
-
-    var calendar = new Calendar(calendarEl, {
-      headerToolbar: {
+var calendarEl = document.getElementById('calendar');
+var calendar = new FullCalendar.Calendar(calendarEl, {
+    headerToolbar: {
         left  : 'prev,next today',
         center: 'title',
         right : 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      themeSystem: 'bootstrap',
-      //Random default events
-      events: [
-      {
-          // title          : 'All Day Event',
-          // start: event.start, // Event start date/time
-          // end: event.end,     // Event end date/time (optional)
-          // backgroundColor: '#f56954', //red
-          // borderColor    : '#f56954', //red
-          // allDay         : true
+    },
+    themeSystem: 'bootstrap',
+    events: [],  // No events initially loaded
+    eventClick: function(event, jsEvent, view) {
+        // Example: Alert the event's title and description
+        alert('Event clicked: ' + event.title + '\nDescription: ' + event.description);
+
+        // Show event details in modal
+        $('#eventTitle').text(event.title);
+        $('#eventDescription').text(event.description);
+        $('#eventModal').modal('show');
+    },
+    editable  : false,
+    droppable : false, // Don't allow drag and drop for now
+});
+
+// Render the calendar
+calendar.render();
+
+// Function to load events (via AJAX)
+function loadEvents() {
+    $.ajax({
+        url: '/api/event/calendar',  // Replace with your actual URL to fetch events
+        dataType: 'json',
+        success: function(data) {
+            // Convert server response into event format for FullCalendar
+            var events = data.map(function(event) {
+              console.log(event.startAt);
+              console.log(new Date(event.startAt));
+              
+                return {
+                    id: event.id,
+                    title: event.title,
+                    start: new Date(event.startAt),  // Use startAt for the event's start time
+                    end: new Date(event.endAt),      // Use endAt for the event's end time
+                    description: event.description,
+                    createdBy: event.createdBy,  // Add createdBy info (or other fields as needed)
+                    backgroundColor: colorHexCodes[Math.floor(Math.random() * colorHexCodes.length)],  // Random color
+                    borderColor: colorHexCodes[Math.floor(Math.random() * colorHexCodes.length)],  // Random color
+                    textColor: '#fff'  // Text color (white)
+                };
+            });
+console.log(events)
+            // Clear current events and add new ones
+            calendar.removeAllEvents();  // Remove any existing events
+            calendar.addEventSource(events);  // Add new events
         }
-
-      ],
-      eventClick: function(event, jsEvent, view) {
-            // Example: Alert the event's title and description
-            alert('Event clicked: ' + event.title + '\nDescription: ' + event.description);
-            
-            // You can add more logic here to show a modal, navigate to a new page, etc.
-            // For example, open a modal with event details.
-            $('#eventTitle').text(event.title);
-            $('#eventDescription').text(event.description);
-            $('#eventModal').modal('show');
-        },
-      editable  : false,
-      droppable : false, // this allows things to be dropped onto the calendar !!!
     });
+}
 
-    calendar.render();
-    // $('#calendar').fullCalendar()
+// Call loadEvents initially to load events when the page loads
+loadEvents();
 
-    /* ADDING EVENTS */
-    var currColor = '#3c8dbc' //Red by default
-    // Color chooser button
-    $('#color-chooser > li > a').click(function (e) {
-      e.preventDefault()
-      // Save color
-      currColor = $(this).css('color')
-      // Add color effect to button
-      $('#add-new-event').css({
+// Button to manually reload events
+$('#reloadCalendar').on('click', function() {
+    loadEvents();  // Reload events when the button is clicked
+});
+
+/* ADDING EVENTS */
+var currColor = '#3c8dbc'; // Red by default
+// Color chooser button
+$('#color-chooser > li > a').click(function (e) {
+    e.preventDefault();
+    // Save the selected color
+    currColor = $(this).css('color');
+    // Add color effect to button
+    $('#add-new-event').css({
         'background-color': currColor,
         'border-color'    : currColor
-      })
-    })
-    
-    $(".datetimepicker").each(function () {
-            $(this).datetimepicker();
     });
+});
 
-  })
+$(".datetimepicker").each(function () {
+    $(this).datetimepicker();
+});
+
+});
+
 </script>
 </body>
 </html>
