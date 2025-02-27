@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 import com.dev.cms.service.UserService;
+import com.dev.cms.service.UserTeamService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -23,6 +24,7 @@ import jakarta.servlet.http.HttpSession;
 public class WebController {
 	@Autowired
 	UserService userService;
+	UserTeamService userTeamService;
 	PostService postService;
 
 	@GetMapping("/")
@@ -67,6 +69,10 @@ public class WebController {
 				session.setAttribute("userName", users.get(0).getUsername());
 				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
 				session.setAttribute("role", users.get(0).getRole());
+				
+				//NEEDS WORK
+				userTeamService.findByUserId(null);
+
 				 if(users.get(0).getOrg().getOrgName().equals("cms"))
 				 {
 				 	return "redirect:/organization";
