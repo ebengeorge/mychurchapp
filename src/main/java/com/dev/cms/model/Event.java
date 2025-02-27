@@ -6,19 +6,19 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.Instant;
 
 @Entity
-@Table(name = "post")
-public class Post {
+@Table(name = "event")
+public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id", nullable = false)
+    @Column(name = "event_id", nullable = false)
     private Integer id;
 
     @Column(name = "title", nullable = false, length = 45)
     private String title;
 
     @Lob
-    @Column(name = "content", nullable = false)
-    private String content;
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
@@ -44,12 +44,12 @@ public class Post {
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
+    public String getDescription() {
+        return description;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Instant getCreatedAt() {
