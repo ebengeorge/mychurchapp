@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -38,6 +40,21 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "org_id", nullable = false)
     private Organization org;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Comment> comments = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Event> events = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "author")
+    private Set<Post> posts = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Reaction> reactions = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserTeam> userTeams = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -101,6 +118,46 @@ public class User {
 
     public void setOrg(Organization org) {
         this.org = org;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
+
+    public Set<Reaction> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(Set<Reaction> reactions) {
+        this.reactions = reactions;
+    }
+
+    public Set<UserTeam> getUserTeams() {
+        return userTeams;
+    }
+
+    public void setUserTeams(Set<UserTeam> userTeams) {
+        this.userTeams = userTeams;
     }
 
 }
