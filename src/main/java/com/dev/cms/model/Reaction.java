@@ -17,6 +17,10 @@ public class Reaction {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Lob
     @Column(name = "reaction_type", nullable = false)
     private String reactionType;
@@ -39,6 +43,14 @@ public class Reaction {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getReactionType() {
