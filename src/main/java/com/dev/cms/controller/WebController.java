@@ -83,6 +83,7 @@ public class WebController {
 		if(session.getAttribute("userId") == null) {
 			return "redirect:/";
 		}
+		List<Post> posts = postService.findAll();
 		return "timeline";
 	}
 

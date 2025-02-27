@@ -2,9 +2,6 @@ package com.dev.cms.controller;
 
 import com.dev.cms.model.Post;
 import com.dev.cms.service.PostService;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +24,5 @@ public class PostController {
     @DeleteMapping("/{id}")
     public void deletePost(@PathVariable int id) {
         postService.deleteById(id);
-    }
-
-    @GetMapping("/timeline")
-    public List<Post> timeline(){
-        return postService.findAll();
     }
 }
