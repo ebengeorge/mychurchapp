@@ -24,7 +24,9 @@ import jakarta.servlet.http.HttpSession;
 public class WebController {
 	@Autowired
 	UserService userService;
+	@Autowired
 	UserTeamService userTeamService;
+	@Autowired
 	PostService postService;
 
 	@GetMapping("/")
@@ -71,7 +73,7 @@ public class WebController {
 				session.setAttribute("role", users.get(0).getRole());
 				
 				//NEEDS WORK
-				userTeamService.findByUserId(null);
+				userTeamService.findByUser(users.get(0));
 
 				 if(users.get(0).getOrg().getOrgName().equals("cms"))
 				 {
