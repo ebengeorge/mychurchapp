@@ -93,6 +93,15 @@ public class WebController {
 		return "login";
 	}
 
+	@GetMapping("/calendar")
+	public String calendar(Model model, HttpSession session) {
+		// if(session.getAttribute("userId") == null) {
+		// 	return "redirect:/";
+		// }
+		return "calendar";
+	}
+
+
 }
 
 // controller pkg - interacts with the view eg html/api endpoints
