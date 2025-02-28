@@ -2,9 +2,6 @@ package com.dev.cms.model;
 
 import jakarta.persistence.*;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "teams")
 public class Team {
@@ -26,15 +23,6 @@ public class Team {
 
     @Column(name = "is_default")
     private Byte isDefault;
-
-    @OneToMany(mappedBy = "team")
-    private Set<Event> events = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "team")
-    private Set<Post> posts = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "team")
-    private Set<UserTeam> userTeams = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -74,30 +62,6 @@ public class Team {
 
     public void setIsDefault(Byte isDefault) {
         this.isDefault = isDefault;
-    }
-
-    public Set<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(Set<Event> events) {
-        this.events = events;
-    }
-
-    public Set<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
-
-    public Set<UserTeam> getUserTeams() {
-        return userTeams;
-    }
-
-    public void setUserTeams(Set<UserTeam> userTeams) {
-        this.userTeams = userTeams;
     }
 
 }
