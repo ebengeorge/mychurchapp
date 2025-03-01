@@ -139,6 +139,58 @@
 </div>
 <!-- ./wrapper -->
 
+<!-- Modal Structure -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="eventModalLabel">Edit Event</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card-body">
+          <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
+            <ul class="fc-color-picker" id="color-chooser">
+              <li><a href="#" class="color-item"><i class="fas fa-square"></i></a></li>
+            </ul>
+          </div>
+
+          <input type="hidden" id="eventId">
+          <input type="hidden" id="teamId">
+
+          <div class="form-group">
+            <label for="new-event">Event Title</label>
+            <input type="text" class="form-control" placeholder="Enter Event Title" id="new-event">
+          </div>
+
+          <div class="form-group">
+            <label for="event-description">Description</label>
+            <textarea class="form-control" rows="3" placeholder="Enter Description" id="event-description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="start-date">Starts At</label>
+            <input type="text" class="form-control datetimepicker" placeholder="Enter Starts At" id="start-date">
+          </div>
+
+          <div class="form-group">
+            <label for="end-date">Ends At</label>
+            <input type="text" class="form-control datetimepicker" placeholder="Enter Ends At" id="end-date">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="delete-event-btn">Delete</button>
+        <button type="button" class="btn btn-primary" id="save-event-btn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- jQuery -->
 <script src="../plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap -->
@@ -245,18 +297,16 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     themeSystem: 'bootstrap',
     events: [],  // No events initially loaded
     eventClick: function(event, jsEvent, view) {
-        // Example: Alert the event's title and description
-        alert('Event clicked: ' + event.title + '\nDescription: ' + event.description);
-
-        // Show event details in modal
-        $('#eventTitle').text(event.title);
-        $('#eventDescription').text(event.description);
-        $('#eventModal').modal('show');
+      openEditEventModal(event)
     },
     editable  : false,
     droppable : false, // Don't allow drag and drop for now
+    eventDidMount: function(info) {
+      var event = info.event;
+      var element = info.el;  // The DOM element of the event
+      $(element).data('event-id', event.id);
+    }
 });
-
 // Render the calendar
 calendar.render();
 function rgbToHex(rgb) {
@@ -280,14 +330,11 @@ function loadEvents() {
         success: function(data) {
             // Convert server response into event format for FullCalendar
             var events = data.map(function(event) {
-                // Log the team ID and color to make sure the color is being fetched correctly
-                console.log(event.team.id + " > " + $('a.color-item[data-team-id="' + event.team.id + '"]').css('color'));
-
+                
                 // Fetch the color associated with the team ID
                 var color = $('a.color-item[data-team-id="' + event.team.id + '"]').css('color');
                 color = rgbToHex(color);
-                console.log("Event color for team " + event.team.id + ": " + color);
-
+                
                 // Return the event in FullCalendar's expected format
                 return {
                     id: event.id,
@@ -298,12 +345,11 @@ function loadEvents() {
                     createdBy: event.createdBy,  // Add createdBy info (or other fields as needed)
                     backgroundColor: color,  // Use color for the background
                     borderColor: color,      // Use color for the border
-                    textColor: '#fff'        // White text for better contrast
+                    textColor: '#fff',        // White text for better contrast
+                    classNames:[event.id]
                 };
             });
             
-            console.log(events); // Log the events to verify the data structure
-
             // Clear current events and add new ones
             calendar.removeAllEvents();  // Remove any existing events
             calendar.addEventSource(events);  // Add the new events to the calendar
@@ -358,9 +404,7 @@ $(".datetimepicker").each(function () {
       return false;
     }
     var formValues = getFormValues();
-    // You can now use formValues to do whatever you need, like submitting the form or making an AJAX request
-    console.log(formValues);  // For debugging, see the result in the console
-
+    
     $.ajax({
                 url: "/api/event/save", // Use the form's action URL
                 type: "POST",
@@ -393,6 +437,56 @@ $(".datetimepicker").each(function () {
                 }
             });
   });
+
+
+// Save the event (either create or update)
+$('#save-event-btn').click(function() {
+    var eventData = {
+        id: $('#eventId').val(),
+        teamId: $('#teamId').val(),
+        title: $('#new-event').val(),
+        description: $('#event-description').val(),
+        startAt: $('#start-date').val(),
+        endAt: $('#end-date').val()
+    };
+
+    // Perform AJAX request to save the event (create or update)
+    $.ajax({
+        url: '/api/event/save',  // Adjust URL for save or update API
+        method: 'POST',
+        data: JSON.stringify(eventData),
+        contentType: 'application/json',
+        success: function(response) {
+            console.log('Event saved successfully');
+            $('#eventModal').modal('hide');
+            // Optionally, refresh the event list
+        },
+        error: function(error) {
+            console.error('Error saving event:', error);
+        }
+    });
+});
+
+// Delete the event
+$('#delete-event-btn').click(function() {
+    var eventId = $('#eventId').val();
+
+    // Perform AJAX request to delete the event
+    $.ajax({
+        url: '/api/event/delete/' + eventId,  // Adjust URL for delete API
+        method: 'DELETE',
+        success: function(response) {
+            console.log('Event deleted successfully');
+            $('#eventModal').modal('hide');
+            // Optionally, refresh the event list
+        },
+        error: function(error) {
+            console.error('Error deleting event:', error);
+        }
+    });
+});
+
+
 });
   // Function to read all form values
   function getFormValues() {
@@ -416,10 +510,6 @@ $(".datetimepicker").each(function () {
     formData.endAt = convertToCorrectFormat($('.datetimepicker').last().val());
     formData.createdBy = {};
     formData.createdBy.id = $('#userId').val();
-    // Optionally, you can log the form data to the console
-    console.log(formData);
-
-    // Return the form data object
     return JSON.stringify(formData);;
   }
 
@@ -441,6 +531,19 @@ $(".datetimepicker").each(function () {
 
     // Return the date in ISO 8601 format (e.g., "2025-03-01T11:00:00.000Z")
     return formattedDate.toISOString();
+}
+
+function openEditEventModal(eventData) {
+    // Set modal fields with event data
+    $('#eventId').val(eventData.id);
+    $('#teamId').val(eventData.teamId);
+    $('#new-event').val(eventData.title);
+    $('#event-description').val(eventData.description);
+    $('#start-date').val(eventData.startAt);
+    $('#end-date').val(eventData.endAt);
+
+    // Show the modal
+    $('#eventModal').modal('show');
 }
 </script>
 </body>
