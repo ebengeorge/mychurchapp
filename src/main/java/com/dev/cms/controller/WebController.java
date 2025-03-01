@@ -1,9 +1,12 @@
 package com.dev.cms.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.dev.cms.model.Post;
 import com.dev.cms.model.User;
+import com.dev.cms.model.UserTeam;
 import com.dev.cms.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dev.cms.service.UserService;
 import com.dev.cms.service.UserTeamService;
+import com.dev.cms.utils.Utils;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,6 +32,7 @@ public class WebController {
 	UserTeamService userTeamService;
 	@Autowired
 	PostService postService;
+
 
 	@GetMapping("/")
 	public String home(Model model, HttpSession session) {
@@ -62,18 +67,23 @@ public class WebController {
 	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String authenticate(Model model, HttpSession session, @RequestParam String userId, @RequestParam String pwd) {
 		System.out.println("authenticating " + userId);
+		try {
 		List<User> users = userService.findByEmailId(userId);
 		if (users != null && !users.isEmpty()){
 			if(users.get(0).getPassword().equals(pwd)){
 				System.out.println("successfully logged in " + userId);
-				System.out.println(users.get(0));
-				session.setAttribute("userId", userId);
+				List<UserTeam> utList = userTeamService.findByUser(users.get(0));
+				Map<Integer, String> userTeamMap = new HashMap<Integer, String>();
+				for (UserTeam uTeam : utList) {
+					userTeamMap.put(uTeam.getTeam().getId(), uTeam.getTeam().getName());
+				}
+				String json = Utils.toJson(userTeamMap);
+				session.setAttribute("userId", users.getFirst().getId());
+				session.setAttribute("userName", userId);
 				session.setAttribute("userName", users.get(0).getUsername());
 				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
-				session.setAttribute("role", users.get(0).getRole());
-				
-				//NEEDS WORK
-				userTeamService.findByUser(users.get(0));
+				session.setAttribute("role", users.get(0).getRole());		
+				session.setAttribute("teams", json);
 
 				 if(users.get(0).getOrg().getOrgName().equals("cms"))
 				 {
@@ -84,6 +94,11 @@ public class WebController {
 		} 
 		model.addAttribute("message", "Invalid email/password, try again");
 		return "login";
+	} catch (Exception e) {
+		e.printStackTrace();
+		model.addAttribute("message", "Something went wrong, please try agin");
+		return "login";
+	}
 	}
 
 	@GetMapping("/timeline")
@@ -97,16 +112,15 @@ public class WebController {
 
 	@PostMapping(path = "/logout", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String logout(HttpSession session, @RequestParam String userId) {
-		System.out.println(userId);
 		session.invalidate();
 		return "login";
 	}
 
 	@GetMapping("/calendar")
 	public String calendar(Model model, HttpSession session) {
-		// if(session.getAttribute("userId") == null) {
-		// 	return "redirect:/";
-		// }
+		if(session.getAttribute("userId") == null) {
+			return "redirect:/";
+		}
 		return "calendar";
 	}
 

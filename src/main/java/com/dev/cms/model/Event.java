@@ -3,6 +3,8 @@ package com.dev.cms.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.time.Instant;
 
 @Entity
@@ -33,7 +35,7 @@ public class Event {
 
     @Column(name = "end_at", nullable = false)
     private Instant endAt;
-
+    
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
     private Instant createdAt;

@@ -42,7 +42,7 @@
           <div class="dropdown-divider"></div>
           <a href="#" class="dropdown-item dropdown-footer" onclick="submitLogout()">Logout</a>
           <form id="logoutform" action="logout" method="POST">
-            <input type="hidden" name="userId" value='${sessionScope.userId}'>
+            <input type="hidden" name="userId" value='${sessionScope.userName}'>
           </form>
         </div>
       </li>
