@@ -1,5 +1,9 @@
 package com.dev.cms.utils;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class Utils {
@@ -22,5 +26,11 @@ public class Utils {
 
         jsonString.append("}");
         return jsonString.toString();
+    }
+
+    public static final String formatInstant(Instant instant) {
+        ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+        return zonedDateTime.format(formatter);       
     }
 }

@@ -160,7 +160,36 @@
 <script src="../../dist/js/demo.js"></script>
 <script src="app.js"></script>
 <script>
+     function timeAgo(timestamp) {
+        const now = new Date();
+        const date = new Date(timestamp);
+        
+        const seconds = Math.floor((now - date) / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const months = Math.floor(days / 30); // approx 30 days in a month
+        const years = Math.floor(days / 365); // approx 365 days in a year
+        
+        const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+        if (seconds < 60) {
+            return rtf.format(-seconds, 'second');
+        } else if (minutes < 60) {
+            return rtf.format(-minutes, 'minute');
+        } else if (hours < 24) {
+            return rtf.format(-hours, 'hour');
+        } else if (days < 30) {
+            return rtf.format(-days, 'day');
+        } else if (months < 12) {
+            return rtf.format(-months, 'month');
+        } else {
+            return rtf.format(-years, 'year');
+        }
+    }
+
     $(document).ready(function() {
+
         $.ajax({
             url: '/api/post/timeline',  // URL to your API endpoint
             type: 'GET',
@@ -221,24 +250,33 @@
             var timeSpan = $('<span></span>')
                 .addClass('time')
                 .append($('<i></i>').addClass('fas fa-clock'))
-                .append(' ' + post.time);
+                .append(' ' + timeAgo(post.createdAt));
             timelineItem.append(timeSpan);
 
             // Create and append the header with the author's username
-            var header = $('<h3></h3>')
+            var header = $('<h4></h4>')
                 .addClass('timeline-header');
             var authorLink = $('<a></a>')
                 .attr('href', '')
                 .text(post.author.username);
-            header.append(authorLink).append(' posted in ' + post.team.name);
+            header.append(authorLink).append(' posted in <strong>' + post.team.name + '</strong>');
             timelineItem.append(header);
 
-            var postTxt = "<h3>"+post.title+"</h3><br><span>"+post.content+"</span>"
+            var postTxt = "<h4 class='badge bg-primary' style='font-size:100%'>"+post.title+"</h4><br><span>"+post.content+"</span>"
 
             // Create and append the timeline body
-            var bodyDiv = $('<div></div>')
+            var bodyDiv = '';
+            if(EVENT) {
+                bodyDiv = ' <div class="info-box-content">'
+               + ' <span class="info-box-text text-center text-muted">'+"2:00"+'</span>'
+               + ' <span class="info-box-number text-center text-muted mb-0">'+"3:00"+'</span>'      
+               + '</div>'             
+            } else {
+                bodyDiv = $('<div></div>')
                 .addClass('timeline-body')
                 .html(postTxt);
+            }
+            
 
             timelineItem.append(bodyDiv);
 

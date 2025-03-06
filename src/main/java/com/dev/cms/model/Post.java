@@ -3,6 +3,8 @@ package com.dev.cms.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -38,9 +40,11 @@ public class Post {
     @JoinColumn(name = "team_id", nullable = false)
     private Team team;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "post")
     private Set<Comment> comments = new LinkedHashSet<>();
-
+    
+    @JsonIgnore
     @OneToMany(mappedBy = "post")
     private Set<Reaction> reactions = new LinkedHashSet<>();
 

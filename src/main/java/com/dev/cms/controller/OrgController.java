@@ -52,7 +52,7 @@ public class OrgController {
     }
 
     @PostMapping("/save")
-    public Organization save(@RequestBody Organization org, @RequestParam String adminUserId) {
+    public Organization save(@RequestBody Organization org,  @RequestParam String adminUserId) {
         try {
             orgService.save(org);
             Team team;

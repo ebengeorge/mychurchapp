@@ -4,6 +4,7 @@ import com.dev.cms.model.Event;
 import com.dev.cms.model.Post;
 import com.dev.cms.service.EventService;
 import com.dev.cms.service.PostService;
+import com.dev.cms.utils.Utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +33,9 @@ public class EventController {
         e.setUpdatedAt(Instant.now());
         e = eventService.save(e);
         Post post = new Post();
-        post.setTitle("New Event Created ");
-        post.setContent(e.getTitle()+ "<br>" + e.getDescription() + "<br> Time: " + e.getStartAt() + " to " + e.getEndAt());
+        post.setTitle("#EVENT# New Event Created " + e.getTitle());
+        
+        post.setContent(e.getDescription() + "<br> Time: " + Utils.formatInstant(e.getStartAt()) + " to " + Utils.formatInstant(e.getEndAt()));
         post.setAuthor(e.getCreatedBy());
         post.setCreatedAt(Instant.now());
         post.setTeam(e.getTeam());
