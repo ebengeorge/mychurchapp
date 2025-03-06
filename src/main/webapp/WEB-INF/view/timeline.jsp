@@ -259,24 +259,45 @@
             var authorLink = $('<a></a>')
                 .attr('href', '')
                 .text(post.author.username);
-            header.append(authorLink).append(' posted in <strong>' + post.team.name + '</strong>');
+
+            var isEvent = false;
+            if (post.title.startsWith('#EVENT#')) {
+                isEvent = true;
+            }
+            if (isEvent) {
+                header.append(authorLink).append(' created new event for <strong>' + post.team.name + '</strong>');
+            } else {
+                header.append(authorLink).append(' posted in <strong>' + post.team.name + '</strong>');
+            }
             timelineItem.append(header);
 
-            var postTxt = "<h4 class='badge bg-primary' style='font-size:100%'>"+post.title+"</h4><br><span>"+post.content+"</span>"
-
-            // Create and append the timeline body
             var bodyDiv = '';
-            if(EVENT) {
-                bodyDiv = ' <div class="info-box-content">'
-               + ' <span class="info-box-text text-center text-muted">'+"2:00"+'</span>'
-               + ' <span class="info-box-number text-center text-muted mb-0">'+"3:00"+'</span>'      
-               + '</div>'             
+            if (isEvent) {
+                console.log(post.content);
+                console.log(JSON.parse(post.content));
+               var content = JSON.parse(post.content);
+               var t = post.title.split("#EVENT#")[1]
+               postTxt = "<h4 class='badge bg-primary' style='font-size:100%'>"+t+"</h4><br>";
+               postTxt += '<div class="row"><div class="col-12 col-sm-4"><div class="info-box bg-light"><div class="info-box-content">'
+               + ' <span class="info-box-text text-center text-muted">Details</span>'
+               + ' <span class="info-box-number text-center text-muted mb-0">'+content.desc+'</span>'      
+               + '</div></div></div>' ;
+               postTxt += '<div class="col-12 col-sm-4"><div class="info-box bg-light"><div class="info-box-content">'
+               + ' <span class="info-box-text text-center text-muted">Starts At</span>'
+               + ' <span class="info-box-number text-center text-muted mb-0">'+content.from+'</span>'      
+               + '</div></div></div>' ;
+               postTxt += '<div class="col-12 col-sm-4"><div class="info-box bg-light"><div class="info-box-content">'
+               + ' <span class="info-box-text text-center text-muted">Ends At</span>'
+               + ' <span class="info-box-number text-center text-muted mb-0">'+content.to+'</span>'      
+               + '</div></div></div></div>' ;
+                
             } else {
-                bodyDiv = $('<div></div>')
+                postTxt = "<h4 class='badge bg-primary' style='font-size:100%'>"+post.title+"</h4><br><span>"+post.content+"</span>";
+            }
+
+            bodyDiv = $('<div></div>')
                 .addClass('timeline-body')
                 .html(postTxt);
-            }
-            
 
             timelineItem.append(bodyDiv);
 

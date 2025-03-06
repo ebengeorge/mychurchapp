@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/event")
@@ -25,17 +30,28 @@ public class EventController {
         this.postService = postService;
     }
 
+    @GetMapping("/{id}")
+    public Optional<Event> getById(@PathVariable int id) {
+        return eventService.findById(id);
+    }
+    
+
     @PostMapping("/save")
     public Event createEvent(@RequestBody Event e) {
+        boolean isCreate = false; 
         if(e.getId() == null) {
             e.setCreatedAt(Instant.now());
+            isCreate =true;
         }
         e.setUpdatedAt(Instant.now());
         e = eventService.save(e);
         Post post = new Post();
-        post.setTitle("#EVENT# New Event Created " + e.getTitle());
-        
-        post.setContent(e.getDescription() + "<br> Time: " + Utils.formatInstant(e.getStartAt()) + " to " + Utils.formatInstant(e.getEndAt()));
+        if(isCreate) {
+            post.setTitle("#EVENT# Event Created : " + e.getTitle());
+        } else {
+            post.setTitle("#EVENT# Event Updated : " + e.getTitle());           
+        }
+        post.setContent("{\"desc\":\"" + e.getDescription() + "\", \"from\":\"" + Utils.formatInstant(e.getStartAt()) + "\",\"to\":\"" + Utils.formatInstant(e.getEndAt())+"\"}");
         post.setAuthor(e.getCreatedBy());
         post.setCreatedAt(Instant.now());
         post.setTeam(e.getTeam());

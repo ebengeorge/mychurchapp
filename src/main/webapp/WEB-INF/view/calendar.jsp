@@ -18,6 +18,33 @@
     .card-title{
       margin: 0;
     }
+
+    /* Style the container to position the icons on top of each other */
+.color-item {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.color-item .fa-square {
+  font-size: 30px; /* Size of the square */
+}
+
+.color-item .fa-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the check icon */
+  font-size: 20px; /* Size of the check */
+  color: white; /* Color of the check */
+  display: none; /* Initially hide the check icon */
+}
+
+.color-item.checked .fa-check {
+  display: block; /* Show the check icon when the item is checked */
+}
+
+
   </style>
 </head>
 <body class="hold-transition sidebar-mini">
@@ -91,11 +118,11 @@
 
                   <div class="form-group">
                     <label>Starts At</label>
-                    <input type="text" class="form-control datetimepicker" placeholder="Enter Starts At">
+                    <input type="text" class="form-control datetimepicker" placeholder="Enter Starts At" id="startsAt">
                   </div>
                   <div class="form-group">
                     <label>Ends At</label>
-                    <input type="text" class="form-control datetimepicker " placeholder="Enter Ends At">
+                    <input type="text" class="form-control datetimepicker " placeholder="Enter Ends At" id="endsAt">
                   </div>
                 </div>
                 <div class="card-footer">
@@ -152,32 +179,32 @@
       <div class="modal-body">
         <div class="card-body">
           <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
-            <ul class="fc-color-picker" id="color-chooser">
-              <li><a href="#" class="color-item"><i class="fas fa-square"></i></a></li>
+            <ul class="fc-color-picker" id="md-color-chooser">
+              
             </ul>
           </div>
 
-          <input type="hidden" id="eventId">
-          <input type="hidden" id="teamId">
+          <input type="hidden" id="md-eventId">
+          <input type="hidden" id="md-teamId">
 
           <div class="form-group">
             <label for="new-event">Event Title</label>
-            <input type="text" class="form-control" placeholder="Enter Event Title" id="new-event">
+            <input type="text" class="form-control" placeholder="Enter Event Title" id="md-title">
           </div>
 
           <div class="form-group">
             <label for="event-description">Description</label>
-            <textarea class="form-control" rows="3" placeholder="Enter Description" id="event-description"></textarea>
+            <textarea class="form-control" rows="3" placeholder="Enter Description" id="md-event-description"></textarea>
           </div>
 
           <div class="form-group">
             <label for="start-date">Starts At</label>
-            <input type="text" class="form-control datetimepicker" placeholder="Enter Starts At" id="start-date">
+            <input type="text" class="form-control datetimepicker" placeholder="Enter Starts At" id="md-start-date">
           </div>
 
           <div class="form-group">
             <label for="end-date">Ends At</label>
-            <input type="text" class="form-control datetimepicker" placeholder="Enter Ends At" id="end-date">
+            <input type="text" class="form-control datetimepicker" placeholder="Enter Ends At" id="md-end-date">
           </div>
         </div>
       </div>
@@ -219,6 +246,9 @@ href=
 
 <!-- Page specific script -->
 <script>
+
+
+
 $(function () {
 const colorHexCodes = [
     "#3498db",  // Bright Blue
@@ -244,7 +274,6 @@ var teamData = $('#user-teams').val();
 var teams = JSON.parse(teamData);
  // Initialize a counter variable
  var counter = 0;
-
 // Loop through the JSON data and create the external-event divs
 $.each(teams, function(teamId, teamName) {
   // Create a new external-event div
@@ -268,24 +297,22 @@ var $a = $('<a href="#" class="color-item"></a>');
 }
 $a.attr('data-team-id', teamId); 
 // Create the <i> element that will display the color
-var $i = $('<i class="fas fa-square"></i>');
+var $i = $('<i class="fas fa-square"></i><i class="fas fa-check"></i>');
 
 // Set the tooltip text (you can customize this text)
-$a.attr('data-toggle', 'tooltip')
-       .attr('title', teamName);  // Tooltip text
-
-// Append the <i> to the <a> tag
+$a.attr('data-toggle', 'tooltip').attr('title', teamName);  // Tooltip text
 $a.append($i);
-
-// Append the <a> to the <li> element
 $li.append($a);
-
-// Append the <li> element to the #color-chooser <ul>
 $('#color-chooser').append($li);
+$('#md-color-chooser').append($li.clone());
 $('[data-toggle="tooltip"]').tooltip();
-  // Increment the counter
   counter++;
 });
+$('.color-item').click(function() {
+    $('.color-item').removeClass('checked');
+    $(this).addClass('checked');
+});
+
 
 var calendarEl = document.getElementById('calendar');
 var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -296,8 +323,8 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     },
     themeSystem: 'bootstrap',
     events: [],  // No events initially loaded
-    eventClick: function(event, jsEvent, view) {
-      openEditEventModal(event)
+    eventClick: function(e, jsEvent, view) {
+      openEditEventModal(e.event.id)
     },
     editable  : false,
     droppable : false, // Don't allow drag and drop for now
@@ -346,7 +373,7 @@ function loadEvents() {
                     backgroundColor: color,  // Use color for the background
                     borderColor: color,      // Use color for the border
                     textColor: '#fff',        // White text for better contrast
-                    classNames:[event.id]
+                    classNames:["eventId_"+event.id]
                 };
             });
             
@@ -377,7 +404,7 @@ var currColor = '#3c8dbc'; // Red by default
 // Color chooser button
 $('#color-chooser > li > a').click(function (e) {
     e.preventDefault();
-    $(this).addClass("clicked");
+    $(this).addClass("checked");
     // Save the selected color
     currColor = $(this).css('color');
     // Add color effect to button
@@ -387,13 +414,19 @@ $('#color-chooser > li > a').click(function (e) {
     });
     $('#teamId').val($(this).data('team-id'));
 });
-
+$('.color-item').click(function() {
+    // Remove the "checked" class from all items
+    $('.color-item').removeClass('checked');
+    
+    // Add the "checked" class to the clicked item
+    $(this).addClass('checked');
+  });
 $(".datetimepicker").each(function () {
     $(this).datetimepicker();
 });
   // Example of how to call the function when you need to retrieve the form values
   $('#add-new-event').on('click', function() {
-    if ($('.clicked').length == 0) {
+    if ($('.checked').length == 0) {
       $(document).Toasts('create', {
         class: 'bg-danger',
         title: 'Attention!',
@@ -441,28 +474,50 @@ $(".datetimepicker").each(function () {
 
 // Save the event (either create or update)
 $('#save-event-btn').click(function() {
-    var eventData = {
-        id: $('#eventId').val(),
-        teamId: $('#teamId').val(),
-        title: $('#new-event').val(),
-        description: $('#event-description').val(),
-        startAt: $('#start-date').val(),
-        endAt: $('#end-date').val()
-    };
+  $('#md-teamId').val($('#md-color-chooser > li > a.checked').data("team-id"));
+    // Create an object to store form values
+    var formData = {};
+    formData.id = Number($('#md-eventId').val()); 
+    formData.team = {};
+    formData.team.id = Number($('#md-teamId').val());
+    formData.title = $('#md-title').val();
+    formData.description = $('#md-event-description').val();
+    formData.startAt = convertToCorrectFormat($('#md-start-date').val()); 
+    formData.endAt = convertToCorrectFormat($('#md-start-date').val());
+    formData.createdBy = {};
+    formData.createdBy.id = Number($('#userId').val());
+    var eventData = JSON.stringify(formData);
 
     // Perform AJAX request to save the event (create or update)
     $.ajax({
-        url: '/api/event/save',  // Adjust URL for save or update API
-        method: 'POST',
-        data: JSON.stringify(eventData),
-        contentType: 'application/json',
+      url: "/api/event/save", // Use the form's action URL
+                type: "POST",
+                data: eventData,  // convertToJson should serialize your form data appropriately
+                dataType: 'json',
+                contentType: 'application/json',
+                headers: {
+                    "Content-Type": "application/json"
+                },
         success: function(response) {
-            console.log('Event saved successfully');
+                    loadEvents(); 
             $('#eventModal').modal('hide');
-            // Optionally, refresh the event list
+            $(document).Toasts('create', {
+                        class: 'bg-success',
+                        title: 'Success',
+                        body: 'New Event created successfully',
+                        autohide: true,
+                        delay: 1500
+                    });
         },
         error: function(error) {
             console.error('Error saving event:', error);
+            $(document).Toasts('create', {
+                    class: 'bg-danger',
+                    title: 'Oops!',
+                    body: 'Something went wrong, try again!',
+                    autohide: true,
+                    delay: 1500
+            });
         }
     });
 });
@@ -506,8 +561,8 @@ $('#delete-event-btn').click(function() {
     formData.description = $('textarea').val();
     const outputDate = 
     // Get the values of the datetimepicker inputs
-    formData.startAt = convertToCorrectFormat($('.datetimepicker').first().val()); 
-    formData.endAt = convertToCorrectFormat($('.datetimepicker').last().val());
+    formData.startAt = convertToCorrectFormat($('#startsAt').val()); 
+    formData.endAt = convertToCorrectFormat($('#endsAt').val());
     formData.createdBy = {};
     formData.createdBy.id = $('#userId').val();
     return JSON.stringify(formData);;
@@ -533,18 +588,43 @@ $('#delete-event-btn').click(function() {
     return formattedDate.toISOString();
 }
 
-function openEditEventModal(eventData) {
+function openEditEventModal(eventId) {
     // Set modal fields with event data
-    $('#eventId').val(eventData.id);
-    $('#teamId').val(eventData.teamId);
-    $('#new-event').val(eventData.title);
-    $('#event-description').val(eventData.description);
-    $('#start-date').val(eventData.startAt);
-    $('#end-date').val(eventData.endAt);
-
-    // Show the modal
-    $('#eventModal').modal('show');
+    $.ajax({
+        url: "/api/event/" + eventId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(eventData) {
+          console.log(eventData);
+          // Populate modal fields with the retrieved organization data
+          $('#modal-header').text(eventData.title);
+          $('#md-eventId').val(eventData.id);
+          $('#md-color-chooser').find('[data-team-id="' + eventData.team.id + '"]').click();
+          $('#md-teamId').val(eventData.teamId);
+          $('#md-title').val(eventData.title);
+          $('#md-event-description').val(eventData.description);
+          $('#md-start-date').val(formatDateTime(eventData.startAt));
+          $('#md-end-date').val(formatDateTime(eventData.endAt));
+          $('#eventModal').modal('show');
+        }
+      });
 }
+
+function formatDateTime(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date)) {
+      // If the date is invalid
+      return 'Invalid Date';
+    }
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // 0-indexed, so add 1
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    var str = year+"/"+month+"/"+day+" "+hours+":"+minutes;
+    return str;
+}
+
 </script>
 </body>
 </html>

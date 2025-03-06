@@ -317,8 +317,8 @@
       }
       $.ajax({
         type: "POST",
-        url: apiUrl,  // Ensure this URL matches your server-side update/save endpoint
-        data: convertToJson("orgSave"),  // convertToJson should serialize your form data appropriately
+        url: apiUrl,  
+        data: convertToJson("orgSave"),  
         dataType: 'json',
         contentType: 'application/json',
         success: function(data) {
