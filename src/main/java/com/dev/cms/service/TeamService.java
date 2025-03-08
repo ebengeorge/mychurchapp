@@ -10,5 +10,6 @@ import java.util.List;
 public interface TeamService extends JpaRepository<Team, Integer> {
     List<Team> findByName(String name);
 
-    List<Team> findByOrg_Id(Integer orgId);
+    // Updated method name to clearly indicate filtering by organization ID
+    List<Team> findByOrgId(Integer orgId);
 }
