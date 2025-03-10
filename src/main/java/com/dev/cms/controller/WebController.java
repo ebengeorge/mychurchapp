@@ -22,8 +22,6 @@ import com.dev.cms.utils.Utils;
 
 import jakarta.servlet.http.HttpSession;
 
-
-
 @org.springframework.stereotype.Controller
 public class WebController {
 	@Autowired
@@ -63,6 +61,16 @@ public class WebController {
 		return "admin";
 	}
 
+	@GetMapping("/teamAdmin")
+	public String teamAdmin(HttpSession session) {
+		// Ensure that the user is logged in before displaying the team admin page.
+		if (session.getAttribute("userId") == null) {
+			return "redirect:/";
+		}
+		// "teamAdmin" is the logical view name that your view resolver will map to /WEB-INF/views/teamAdmin.jsp (for example)
+		return "teamAdmin";
+	}
+
 
 	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String authenticate(Model model, HttpSession session, @RequestParam String userId, @RequestParam String pwd) {
@@ -82,7 +90,8 @@ public class WebController {
 				session.setAttribute("userName", userId);
 				session.setAttribute("userName", users.get(0).getUsername());
 				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
-				session.setAttribute("role", users.get(0).getRole());		
+				session.setAttribute("orgId", users.get(0).getOrg().getId());
+				session.setAttribute("role", users.get(0).getRole());
 				session.setAttribute("teams", json);
 
 				 if(users.get(0).getOrg().getOrgName().equals("cms"))
@@ -91,7 +100,7 @@ public class WebController {
 				 }
 				return "redirect:/dashboard";
 			}
-		} 
+		}
 		model.addAttribute("message", "Invalid email/password, try again");
 		return "login";
 	} catch (Exception e) {

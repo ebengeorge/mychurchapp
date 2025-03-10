@@ -242,12 +242,10 @@ href=
 <script src=
 "https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js">
 </script>
-
+<script src="app.js"></script>
 
 <!-- Page specific script -->
 <script>
-
-
 
 $(function () {
 const colorHexCodes = [
