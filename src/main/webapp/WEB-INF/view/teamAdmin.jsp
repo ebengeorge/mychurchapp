@@ -69,7 +69,6 @@
                   <tr>
                     <th>Team Name</th>
                     <th>Description</th>
-                    <th>Default</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
@@ -79,7 +78,6 @@
                   <tr>
                     <th>Team Name</th>
                     <th>Description</th>
-                    <th>Default</th>
                     <th>Actions</th>
                   </tr>
                   </tfoot>
@@ -91,6 +89,39 @@
       </div>
     </section>
   </div>
+
+  <!-- Team Modal -->
+  <div class="modal fade" id="teamModal" tabindex="-1" role="dialog" aria-labelledby="teamModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="teamModalLabel" class="modal-title"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="teamForm">
+          <div class="modal-body">
+            <input type="hidden" id="teamId" name="teamId">
+            <div class="form-group">
+              <label for="teamName">Team Name</label>
+              <input type="text" class="form-control" id="teamName" name="teamName" required>
+            </div>
+            <div class="form-group">
+              <label for="teamDescription">Description</label>
+              <textarea class="form-control" id="teamDescription" name="teamDescription" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" id="saveTeamBtn" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Footer / Additional Modals can be added here if needed -->
 </div>
 
@@ -119,17 +150,13 @@
     // Initialize the DataTable for teams
     var table = $('#teamTable').DataTable({
       ajax: {
-        url: "/api/team/list",  // This endpoint should filter teams by orgId
-        data: { orgId: orgId },
+        url: "/api/team?orgId=" + orgId,  // This endpoint should filter teams by orgId
+        dataType: 'json',
         dataSrc: ""
       },
       columns: [
         { data: "name" },
         { data: "description" },
-        { data: "isDefault", render: function(data) {
-            return data === 1 ? "Yes" : "No";
-          }
-        },
         {
           data: "id",
           render: function(data, type, row) {
@@ -140,25 +167,119 @@
       ]
     });
 
-    // Edit team event
-    $('#teamTable tbody').on('click', '.editTeamBtn', function() {
-      var teamId = $(this).attr("data-id");
-      // Implement AJAX call to get team details and show in a modal for editing
-      console.log("Edit team with id:", teamId);
+    $(document).ready(function() {
+
+      // Delegate event for Edit team buttons
+      $('#teamTable tbody').on('click', '.editTeamBtn', function() {
+        var teamId = $(this).attr("data-id");
+        $.ajax({
+          url: "/api/team/" + teamId,  // Assumes GET returns team details in JSON
+          type: 'GET',
+          dataType: 'json',
+          success: function(res) {
+            // Populate modal fields with team data
+            $('#teamModalLabel').text("Edit Team: " + res.name);
+            $('#teamId').val(res.id);
+            $('#teamName').val(res.name);
+            $('#teamDescription').val(res.description);
+            $('#teamModal').modal('show');
+          },
+          error: function(xhr, status, error) {
+            console.error("Error retrieving team data:", error);
+          }
+        });
+      });
+
+      // Delegate event for Delete team buttons
+      $('#teamTable tbody').on('click', '.deleteTeamBtn', function() {
+        var teamId = $(this).attr("data-id");
+        if (confirm("Are you sure you want to delete this team?")) {
+          $.ajax({
+            url: "/api/team/" + teamId,  // Assumes DELETE endpoint for team admin
+            type: 'DELETE',
+            success: function(response) {
+              $(document).Toasts('create', {
+                class: 'bg-success',
+                title: 'Deleted',
+                body: 'Team deleted successfully',
+                autohide: true,
+                delay: 1500
+              });
+              // Reload the team table (assuming your DataTable instance variable is "table")
+              $('#teamTable').DataTable().ajax.reload(null, false);
+            },
+            error: function(xhr, status, error) {
+              $(document).Toasts('create', {
+                class: 'bg-danger',
+                title: 'Error',
+                body: 'Error deleting team',
+                autohide: true,
+                delay: 1500
+              });
+            }
+          });
+        }
+      });
+
+      // Open modal for adding a new team
+      $("#addTeamBtn").click(function(){
+        $('#teamModalLabel').text("New Team");
+        // Clear the form fields
+        $('#teamForm')[0].reset();
+        $('#teamId').val('');
+        $('#teamModal').modal('show');
+      });
+
+      // When the Save Changes button is clicked in the team modal
+      $("#saveTeamBtn").click(function() {
+        var teamData = {
+          name: $('#teamName').val(),
+          description: $('#teamDescription').val()
+        };
+        var teamId = $('#teamId').val();
+        // If editing, include the team ID (for simplicity, using POST for both create/update)
+        if (teamId && teamId !== "") {
+          teamData.id = teamId;
+        }
+        teamData.org = {id:orgId};
+        $.ajax({
+          url: "/api/team",  // Endpoint to save team for organization admin
+          type: 'POST',
+          data: JSON.stringify(teamData),
+          contentType: 'application/json',
+          dataType: 'json',
+          success: function(res) {
+            $('#teamModal').modal('hide');
+            $(document).Toasts('create', {
+              class: 'bg-success',
+              title: 'Success',
+              body: 'Team saved successfully',
+              autohide: true,
+              delay: 1500
+            });
+            // Reload the team DataTable
+            $('#teamTable').DataTable().ajax.reload(null, false);
+          },
+          error: function(xhr, status, error) {
+            $(document).Toasts('create', {
+              class: 'bg-danger',
+              title: 'Error',
+              body: 'Error saving team',
+              autohide: true,
+              delay: 1500
+            });
+          }
+        });
+      });
+
+      // Optionally, clear form fields when modal is hidden
+      $('#teamModal').on('hidden.bs.modal', function () {
+        $('#teamForm')[0].reset();
+        $('#teamId').val('');
+      });
     });
 
-    // Delete team event
-    $('#teamTable tbody').on('click', '.deleteTeamBtn', function() {
-      var teamId = $(this).attr("data-id");
-      // Implement confirmation and AJAX call to delete the team
-      console.log("Delete team with id:", teamId);
-    });
 
-    // Add team button event
-    $("#addTeamBtn").click(function(){
-      // Show modal for adding a new team
-      console.log("Show add team modal");
-    });
   });
 </script>
 </body>

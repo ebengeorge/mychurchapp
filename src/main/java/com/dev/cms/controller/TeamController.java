@@ -5,6 +5,7 @@ import com.dev.cms.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -30,6 +31,11 @@ public class TeamController {
 
     @DeleteMapping("/{id}")
     public void deleteDepartment(@PathVariable int id) {
-        teamService.deleteById(id);
+        teamService.updateIsActiveById(id, false);
+    }
+
+    @GetMapping
+    public List<Team> getDepartmentByOrgId(@RequestParam int orgId) {
+        return teamService.findTeamsByOrgIdAndIsActive(orgId, true);
     }
 }

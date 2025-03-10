@@ -1,9 +1,12 @@
 package com.dev.cms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "organization")
@@ -30,6 +33,14 @@ public class Organization {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "org")
+    private Set<Team> teams = new LinkedHashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "org")
+    private Set<User> users = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -77,6 +88,22 @@ public class Organization {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public Set<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
 }
