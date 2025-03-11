@@ -38,4 +38,6 @@ public class TeamController {
     public List<Team> getDepartmentByOrgId(@RequestParam int orgId) {
         return teamService.findTeamsByOrgIdAndIsActive(orgId, true);
     }
+
+
 }

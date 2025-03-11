@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
+
   <!-- Theme style -->
   <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
 </head>
@@ -121,6 +123,42 @@
     </div>
   </div>
 
+<!-- Modal Structure -->
+<div class="modal fade" id="assignUserModal" tabindex="-1" aria-labelledby="assignUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="assignUserModalLabel">Assign Users to Team</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <!-- Hidden Team Selection -->
+              <input type="hidden" id="teamSelect" value="">
+
+              <!-- User Selection -->
+             
+              <div class="form-group">
+                  <label for="userSelect">Select Users</label>
+                  <select id="userSelect" class="form-control" multiple="multiple" style="width: 100%;">
+                      <!-- Options will be populated dynamically -->
+                  </select>
+              </div>
+
+              <div id="userListSection" class="mb-3">
+                <h5>Mapped Users</h5>
+                <ul id="userList" class="list-group">
+                    <!-- Users will be populated dynamically -->
+                </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+      </div>
+  </div>
+</div>
 
   <!-- Footer / Additional Modals can be added here if needed -->
 </div>
@@ -142,7 +180,101 @@
 <script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script src="../../dist/js/adminlte.min.js"></script>
 <script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
+  function setTeamAndOpenModal(team) {
+    // Set the team value in the hidden field
+    $('#teamSelect').val(team);
+
+    // Optionally, you can set a label or some visual indicator to show which team is being assigned
+    $('#assignUserModalLabel').text('Assign Users to ' + team);
+
+    $('#userList').empty();
+
+    $.ajax({
+      url: '/api/user/team/' + team,  // Endpoint to fetch mapped users based on team ID
+      method: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        // Clear the current list of users
+        $('#userList').empty();
+
+        if (data.length === 0) {
+          $('#userList').append('<strong class="list-group-item">No users mapped to this team.</strong>');
+        } else {
+          // Add each user to the list
+          data.forEach(function(user) {
+            var userItem = $('<li class="list-group-item" data-id="'+ user.id +'"></li>');
+            userItem.text(user.username); // Display user username
+
+            // Create the remove button
+            var removeButton = $('<button class="btn btn-danger btn-sm ml-2 float-right rmv-mapping">Remove</button>');
+
+            // Add remove button to the user item
+            userItem.append(removeButton);
+
+            // Add click event to remove button
+            removeButton.on('click', function() {
+              var btn = $(this);
+              $.ajax({
+                url: '/api/userTeam/' + $(btn).parents('li').data('id') + "/" +  team,  
+                method: 'DELETE',
+                success: function(response) {
+                    console.log('Event deleted successfully');
+                    $(btn).parents('li').remove();
+                    if ($('#userList li').length == 0) {
+                      $('#userList').append('<strong class="list-group-item">No users mapped to this team.</strong>');
+                    }  
+                },
+                error: function(error) {
+                    console.error('Error deleting event:', error);
+                }
+              });
+            });
+
+            // Append the user item to the list
+            $('#userList').append(userItem);
+          });
+        }
+      },
+      error: function(error) {
+        console.error("Error fetching mapped users:", error);
+        alert("Error fetching mapped users.");
+      }
+    });
+
+    $.ajax({
+        url: '/api/user/team/unassigned/'+ team,  // Your server endpoint to fetch users
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            // Empty the select element before adding new options
+            $('#userSelect').empty();
+
+            // Add options to the select element based on the AJAX response
+            data.forEach(function(user) {
+                var option = new Option(user.username, user.id, false, false);
+                $('#userSelect').append(option);
+            });
+
+            // Initialize Select2 after populating the options
+            $('#userSelect').select2({
+                placeholder: "Select users",
+                allowClear: true,
+                multiple: false 
+            });
+            $('#userSelect').val(null).trigger('change');
+        },
+        error: function(error) {
+            console.error("Error fetching users:", error);
+            alert("Error fetching users.");
+        }
+    });
+    $('#assignUserModal').modal('show');
+}
+
+
+
   $(function () {
     // Get the organization id from the session
     var orgId = ${sessionScope.orgId};
@@ -161,10 +293,54 @@
           data: "id",
           render: function(data, type, row) {
             return '<button type="button" class="btn btn-primary editTeamBtn" data-id="'+ data +'">Edit</button>&nbsp;' +
-                    '<button type="button" class="btn btn-danger deleteTeamBtn" data-id="'+ data +'">Delete</button>';
+                    '<button type="button" class="btn btn-danger deleteTeamBtn" data-id="'+ data +'">Delete</button>&nbsp;' +
+                    '<button type="button" class="btn btn-success assignBtn" data-id="'+ data +'">Assign</button>' ;
           }
         }
       ]
+    });
+
+      $('#userSelect').on('select2:select', function (e) {
+              var selectedUser = e.params.data; // The selected option's data
+              console.log("User selected:", selectedUser); 
+              var userItem = $('<li class="list-group-item data-id="'+selectedUser.id+'"></li>');
+              userItem.text(selectedUser.text); // Display user username
+              $.ajax({
+                  url: '/api/userTeam/' + selectedUser.id + "/" +  $('#teamSelect').val(),  
+                  type: 'POST',
+                  contentType: 'application/json',
+                  dataType: 'json',
+                  success: function(res) {
+                    $(document).Toasts('create', {
+                      class: 'bg-success',
+                      title: 'Success',
+                      body: 'Team saved successfully',
+                      autohide: true,
+                      delay: 1500
+                    });
+                  },
+                  error: function(xhr, status, error) {
+                    if(status != '200') {
+                      $(document).Toasts('create', {
+                      class: 'bg-danger',
+                      title: 'Error',
+                      body: 'Error saving team',
+                      autohide: true,
+                      delay: 1500
+                    });
+                    }
+                    
+                  }
+                });
+
+              var removeButton = $('<button class="btn btn-danger btn-sm ml-2 float-right rmv-mapping">Remove</button>');
+              userItem.append(removeButton);
+              if ($('#userList li').length == 0) {
+                $('#userList').html("");
+              }
+              $('#userList').append(userItem);
+
+
     });
 
     $(document).ready(function() {
@@ -220,6 +396,13 @@
           });
         }
       });
+
+      $('#teamTable tbody').on('click', '.assignBtn', function() { 
+        setTeamAndOpenModal( $(this).attr("data-id"));
+       });
+
+       
+      
 
       // Open modal for adding a new team
       $("#addTeamBtn").click(function(){
@@ -278,8 +461,6 @@
         $('#teamId').val('');
       });
     });
-
-
   });
 </script>
 </body>

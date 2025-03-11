@@ -1,6 +1,8 @@
 package com.dev.cms.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.dev.cms.model.Team;
@@ -78,5 +80,33 @@ public class UserController {
         return userTeams.stream()
                 .map(UserTeam::getUser)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/team/unassigned/{teamId}")
+    public List<User> getUnassignedUsers(@PathVariable Integer teamId) {
+        // Assuming userTeamService has a method findByTeamId; if not, implement it accordingly.
+        Optional<Team> team = teamService.findById(teamId);
+        List<User> returnList = new ArrayList<User>();
+        if(team.isPresent()) {            
+            List<User> allUsers = userService.findByOrg(team.get().getOrg().getId());
+            System.out.println("allUsers : " + allUsers.size());
+            List<UserTeam> userTeams = userTeamService.findByTeamId(teamId);
+            System.out.println("userTeams : " + userTeams.size());
+            for (User user : allUsers) {
+                boolean found = false;
+                for (UserTeam userTeam : userTeams) {               
+                    if (user.getId() == userTeam.getUser().getId()) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    returnList.add(user);
+                } else {
+                    System.out.println("removed user : " + user.getEmail());
+                }
+            }
+        }
+        return returnList;
     }
 }

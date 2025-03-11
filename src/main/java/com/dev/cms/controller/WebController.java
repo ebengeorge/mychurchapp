@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -131,6 +132,14 @@ public class WebController {
 			return "redirect:/";
 		}
 		return "calendar";
+	}
+
+	@GetMapping("/team-{teamName}")
+	public String teams(Model model, HttpSession session, @PathVariable String teamName) {
+		if(session.getAttribute("userId") == null) {
+			return "redirect:/";
+		}
+		return "teampage";
 	}
 
 
