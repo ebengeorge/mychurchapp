@@ -51,7 +51,7 @@
 
         <!-- Calendar Menu Item -->
         <li class="nav-item">
-          <a href="pages/calendar.html" class="nav-link">
+          <a href="/calendar" class="nav-link">
             <i class="nav-icon far fa-calendar-alt"></i>
             <p>
               Calendar
@@ -61,7 +61,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="pages/UI/timeline.html" class="nav-link">
+          <a href="/timeline" class="nav-link">
             <i class="far fa-circle nav-icon"></i>
             <p>Timeline</p>
           </a>
