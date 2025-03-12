@@ -434,6 +434,21 @@ $(".datetimepicker").each(function () {
       });
       return false;
     }
+      // Convert date strings to ISO format
+      var startAt = convertToCorrectFormat($('#startsAt').val());
+      var endAt = convertToCorrectFormat($('#endsAt').val());
+      // Compare dates: if the end date is before the start date, show an error and stop processing
+      if (new Date(endAt) < new Date(startAt)) { 
+         $(document).Toasts('create', {    
+          class: 'bg-danger',    
+          title: 'Attention!',    
+          body: 'Start Date cannot be greater than End Date',    
+          autohide: true,    
+          delay: 1500  
+        }); 
+      return false; 
+      }
+
     var formValues = getFormValues();
     
     $.ajax({
@@ -522,14 +537,15 @@ $('#save-event-btn').click(function() {
 
 // Delete the event
 $('#delete-event-btn').click(function() {
-    var eventId = $('#eventId').val();
-
+    var eventId = $('#md-eventId').val();
+    
     // Perform AJAX request to delete the event
     $.ajax({
-        url: '/api/event/delete/' + eventId,  // Adjust URL for delete API
+        url: '/api/event/' + eventId,  // Adjust URL for delete API
         method: 'DELETE',
         success: function(response) {
             console.log('Event deleted successfully');
+            loadEvents();
             $('#eventModal').modal('hide');
             // Optionally, refresh the event list
         },

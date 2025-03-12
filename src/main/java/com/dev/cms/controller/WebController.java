@@ -111,6 +111,7 @@ public class WebController {
 	}
 	}
 
+
 	@GetMapping("/timeline")
 	public String timeline(Model model, HttpSession session) {
 		if(session.getAttribute("userId") == null) {

@@ -35,7 +35,16 @@ public class EventController {
         return eventService.findById(id);
     }
     
-
+ 
+    @DeleteMapping("/{id}")
+    public boolean delete(@PathVariable int id) {
+        Optional<Event> e = eventService.findById(id);
+        if (e.isPresent()) {
+             eventService.delete(e.get());
+        }
+        return true;
+    }
+    
     @PostMapping("/save")
     public Event createEvent(@RequestBody Event e) {
         boolean isCreate = false; 

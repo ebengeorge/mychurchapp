@@ -34,6 +34,7 @@ public class UserTeamController {
      public boolean saveUserTeam(@PathVariable int userId, @PathVariable int teamId) {
         List<UserTeam> ut = userTeamService.findByUserAndTeam(userId,teamId);
         if(ut != null && !ut.isEmpty()){
+            
         } else {
             UserTeam ut1 = new UserTeam();
             Team t = new Team();
