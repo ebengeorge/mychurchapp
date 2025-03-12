@@ -1,0 +1,15 @@
+### Send POST request with json body
+POST http://localhost:8000/api/user/save
+Content-Type: application/json
+
+{
+  "username":"super.admin9@cms.co.uk",
+  "email":"super.admin9@cms.co.uk",
+  "password":"admin",
+  "org":{
+    "id":12
+  },
+  "role":"user",
+  "createdOn":"2025-01-29T09:24:20.985Z",
+  "isActive":1
+}

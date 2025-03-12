@@ -1,0 +1,25 @@
+package com.dev.cms.service;
+
+
+import java.util.List;
+
+import com.dev.cms.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserService extends JpaRepository<User, Integer>{
+
+
+@Query("select u from User u where u.email = ?1")
+List<User> findByEmailId(String username);
+
+@Query("select u from User u where u.org.id = ?1")
+List<User> findByOrg(int orgId);
+
+
+}
+
+
+
