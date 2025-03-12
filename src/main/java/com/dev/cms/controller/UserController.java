@@ -1,28 +1,26 @@
 package com.dev.cms.controller;
 
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.dev.cms.model.Team;
 import com.dev.cms.model.User;
 import com.dev.cms.model.UserTeam;
 import com.dev.cms.service.TeamService;
 import com.dev.cms.service.UserTeamService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.dev.cms.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
     private final TeamService teamService;
     private final UserTeamService userTeamService;
-
 
     @Autowired
     public UserController(UserService userService, TeamService teamService, UserTeamService userTeamService) {
@@ -31,37 +29,84 @@ public class UserController {
         this.userTeamService = userTeamService;
     }
 
-    @GetMapping("/api/user")
-    public List<User> index(){
+    @GetMapping
+    public List<User> index() {
         return userService.findAll();
     }
 
-    @GetMapping("/api/user/find")
-    public List<User> findById(String emailId){
+    @GetMapping("/find")
+    public List<User> findById(@RequestParam String emailId) {
         return userService.findByEmailId(emailId);
     }
 
-    @PostMapping("/api/user/save")
-    public User save(@RequestBody User user){
-        try
-        {
+    /**
+     * Save a user and assign them to a team.
+     * If a teamId is provided, assign the user to that team.
+     * Otherwise, find the default team in the user's organization.
+     */
+    @PostMapping("/save")
+    public User save(@RequestBody User user, @RequestParam(required = false) Integer teamId) {
+        try {
             userService.save(user);
-
-          List<Team> teams= teamService.findByOrg_Id(user.getOrg().getId());
-         Team  defaultTeam = null;
-          for(Team team:teams){
-              if (team.getIsDefault().intValue()==1) {
-                  defaultTeam = team;
-                break  ;
-              }
-          }
+            Team team;
+            if (teamId != null) {
+                team = teamService.findById(teamId)
+                        .orElseThrow(() -> new RuntimeException("Team not found"));
+            } else {
+                // Use the updated method name: findByOrgId
+                List<Team> teams = teamService.findByOrgId(user.getOrg().getId());
+                team = teams.stream()
+                        .filter(t -> t.getIsDefault() != null && t.getIsDefault().intValue() == 1)
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Default team not found"));
+            }
             UserTeam userTeam = new UserTeam();
-            userTeam.setTeam(defaultTeam);
+            userTeam.setTeam(team);
             userTeam.setUser(user);
             userTeamService.save(userTeam);
             return user;
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    /**
+     * Get all users that are assigned to a given team.
+     */
+    @GetMapping("/team/{teamId}")
+    public List<User> getUsersByTeam(@PathVariable Integer teamId) {
+        // Assuming userTeamService has a method findByTeamId; if not, implement it accordingly.
+        List<UserTeam> userTeams = userTeamService.findByTeamId(teamId);
+        return userTeams.stream()
+                .map(UserTeam::getUser)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/team/unassigned/{teamId}")
+    public List<User> getUnassignedUsers(@PathVariable Integer teamId) {
+        // Assuming userTeamService has a method findByTeamId; if not, implement it accordingly.
+        Optional<Team> team = teamService.findById(teamId);
+        List<User> returnList = new ArrayList<User>();
+        if(team.isPresent()) {            
+            List<User> allUsers = userService.findByOrg(team.get().getOrg().getId());
+            System.out.println("allUsers : " + allUsers.size());
+            List<UserTeam> userTeams = userTeamService.findByTeamId(teamId);
+            System.out.println("userTeams : " + userTeams.size());
+            for (User user : allUsers) {
+                boolean found = false;
+                for (UserTeam userTeam : userTeams) {               
+                    if (user.getId() == userTeam.getUser().getId()) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    returnList.add(user);
+                } else {
+                    System.out.println("removed user : " + user.getEmail());
+                }
+            }
+        }
+        return returnList;
     }
 }

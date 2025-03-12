@@ -15,4 +15,11 @@ public interface UserService extends JpaRepository<User, Integer>{
 @Query("select u from User u where u.email = ?1")
 List<User> findByEmailId(String username);
 
+@Query("select u from User u where u.org.id = ?1")
+List<User> findByOrg(int orgId);
+
+
 }
+
+
+

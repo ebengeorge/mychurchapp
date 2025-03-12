@@ -1,100 +1,90 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.dev</groupId>
 	<artifactId>cms</artifactId>
+	<!-- Change packaging to war for JSP support -->
+	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cms</name>
 	<description>Content Management Service</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 
-		<dependency>
-			<groupId>org.eclipse.jetty.documentation</groupId>
-			<artifactId>jetty</artifactId>
-			<version>12.1.0.alpha1</version>
-			<type>pom</type>
-		</dependency>
+ 	<dependency>
+ 		<groupId>org.springframework.boot</groupId>
+ 		<artifactId>spring-boot-starter-actuator</artifactId>
+ 	</dependency>
 
-
+		<!-- Remove or review any unnecessary Jetty dependency -->
+		<!-- JSTL API -->
 		<dependency>
 			<groupId>jakarta.servlet.jsp.jstl</groupId>
 			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
 			<version>3.0.2</version>
 		</dependency>
-
+		<!-- JSTL Implementation -->
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<!-- Spring Boot Web Starter -->
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Servlet API (provided by the container) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<!-- Use the starter for Spring Security (which brings in the Jakarta‑compatible version) -->
+		<!-- <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency> -->
+		<!-- Spring Boot Data JPA -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<!-- MySQL Connector -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.33</version>
+		</dependency>
+		<!-- Jackson for JSR-310 support -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		<!-- Embedded Tomcat JSP support -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Test dependency -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-tomcat</artifactId>
-</dependency>
-
-<dependency>
-    <groupId>org.apache.tomcat.embed</groupId>
-    <artifactId>tomcat-embed-jasper</artifactId>
-      <scope>provided</scope>
-</dependency>
-
-
-	
-   <dependency>
-     <groupId>org.springframework.security</groupId>
-     <artifactId>spring-security-core</artifactId>
-     <version>5.1.6.RELEASE</version>
-   </dependency>
-
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-    <version>3.4.1</version>
-</dependency>
-
-<dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
-    <version>8.0.33</version>
-</dependency>
-
-<dependency>
-  <groupId>com.fasterxml.jackson.datatype</groupId>
-  <artifactId>jackson-datatype-jsr310</artifactId>
-</dependency>
-
-
- </dependencies>
-
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -103,5 +93,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

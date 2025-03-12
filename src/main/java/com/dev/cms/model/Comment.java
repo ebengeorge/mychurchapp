@@ -1,6 +1,7 @@
 package com.dev.cms.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
@@ -24,9 +25,11 @@ public class Comment {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
     private Instant createdAt;
 
+    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "updated_at")
     private Instant updatedAt;
 

@@ -1,6 +1,7 @@
 package com.dev.cms.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "teams")
@@ -23,6 +24,10 @@ public class Team {
 
     @Column(name = "is_default")
     private Byte isDefault;
+
+    @ColumnDefault("1")
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = false;
 
     public Integer getId() {
         return id;
@@ -62,6 +67,14 @@ public class Team {
 
     public void setIsDefault(Byte isDefault) {
         this.isDefault = isDefault;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
 }
