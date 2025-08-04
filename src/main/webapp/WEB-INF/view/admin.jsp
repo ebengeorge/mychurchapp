@@ -8,13 +8,14 @@
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="/cms/plugins/fontawesome-free/css/all.min.css">
   <!-- DataTables -->
-  <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-  <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <link rel="stylesheet" href="/cms/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/cms/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/cms/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <link rel="stylesheet" href="/cms/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="/cms/dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -145,6 +146,21 @@
               <label for="adminUser">Admin User</label>
               <input type="text" name="adminUser" class="form-control" id="adminUser" placeholder="Enter Admin User">
             </div>
+            <!-- New Logo Upload Field -->
+            <div class="form-group">
+              <label for="orgLogo">Logo</label>
+              <input type="file" name="orgLogo" class="form-control" id="orgLogo" accept="image/*">
+            </div>
+            <!-- New Theme Color Picker Field -->
+            <div class="form-group">
+              <label for="orgTheme">Theme</label>
+              <select name="theme" id="orgTheme" class="form-control">
+                <option value="light" selected>Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+
+
           </div>
           <!-- /.card-body -->
         </form>
@@ -159,13 +175,12 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-
 <!-- confirmation box -->
 <div class="modal fade" id="confirmationBox">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Default Modal</h4>
+        <h4 class="modal-title">Delete Organization</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -186,34 +201,34 @@
 <!-- ./wrapper -->
 
 <!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
+<script src="/cms/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/cms/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- DataTables  & Plugins -->
-<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="../../plugins/jszip/jszip.min.js"></script>
-<script src="../../plugins/pdfmake/pdfmake.min.js"></script>
-<script src="../../plugins/pdfmake/vfs_fonts.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/cms/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/cms/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/cms/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/cms/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/cms/plugins/jszip/jszip.min.js"></script>
+<script src="/cms/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/cms/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<%--<script src="../../dist/js/demo.js"></script>--%>
+<script src="/cms/dist/js/adminlte.min.js"></script>
+
 <script src="app.js"></script>
+<script src="/cms/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 <!-- Page specific script -->
 <script>
   $(function () {
     // Initialize the DataTable with AJAX loading
     var table = $('#orgTable').DataTable({
       ajax: {
-        url: "/api/org",
+        url: "/cms/api/org",
         dataSrc: ""
       },
       columns: [
@@ -230,12 +245,17 @@
       ]
     });
 
+    $('.my-colorpicker2').colorpicker()
+
+    $('.my-colorpicker2').on('colorpickerChange', function(event) {
+      $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+    })
 
     // Delegate event for Edit buttons
     $('#orgTable tbody').on('click', '.edtBtn', function() {
       var orgId = $(this).attr("data-id");
       $.ajax({
-        url: "/api/org/" + orgId,
+        url: "/cms/api/org/" + orgId,
         type: 'GET',
         dataType: 'json',
         success: function(res) {
@@ -245,6 +265,7 @@
           $('#orgName').val(res.orgName);
           $('#isExclusive').val("0");
           $('#orgAddress').val(res.address);
+          $('#orgTheme').val(res.theme);
         }
       });
       $('#adminUserField').hide();
@@ -258,7 +279,7 @@
     });
     function deleteOrganization(orgId) {
       $.ajax({
-        url: "/api/org/" + orgId,  // Your delete endpoint
+        url: "/cms/api/org/" + orgId,  // Your delete endpoint
         type: 'DELETE',
         success: function(response) {
           // Show a success toast
@@ -294,47 +315,124 @@
 
      $('#modal-xl').on('hidden.bs.modal', function () {
      $('#orgSave input[type="text"]').val('');
-    
+
     // Clear all hidden inputs
     $('#orgSave input[type="hidden"]').val('');
-    
+
     // Clear any select dropdowns
     $('#orgSave select').val('').trigger('change');
-    
+
     // Clear all checkboxes and radio buttons
     $('#orgSave input[type="checkbox"], #orgSave input[type="radio"]').prop('checked', false);
-    
+
     // If you have any textarea fields
     $('#orgSave textarea').val('');
     });
 
 
-    // When the Save Changes button is clicked in the modal
     $("#submitBtn").click(function() {
-      var apiUrl = "/api/org/save";
-      if ($('#adminUserField').is(":visible")) {
-        apiUrl = apiUrl + "?adminUserId="+ $('#adminUser').val();
+      // Call validation for the add form
+      if (!validateAddForm()) {
+        return; // Stop the AJAX call if validation fails
       }
+
+      var fileInput = document.getElementById("orgLogo");
+      if (fileInput.files.length > 0) {
+        var file = fileInput.files[0];
+        if (!file.type.startsWith("image/")) {
+          alert("Please select a valid image file.");
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {  // 5MB limit
+          alert("The file size should not exceed 5MB.");
+          return;
+        }
+      }
+
+      var formElement = document.getElementById("orgSave");
+      var formData = new FormData(formElement);
+
+      var apiUrl = "/cms/api/org/save";
+      if ($('#adminUserField').is(":visible")) {
+        apiUrl = apiUrl + "?adminUserId=" + $('#adminUser').val();
+      }
+
       $.ajax({
         type: "POST",
-        url: apiUrl,  
-        data: convertToJson("orgSave"),  
+        url: apiUrl,
+        data: formData,
+        processData: false,
+        contentType: false,
         dataType: 'json',
-        contentType: 'application/json',
         success: function(data) {
           $('#modal-xl').modal('hide');
           $(document).Toasts('create', {
             class: 'bg-success',
             title: 'Success',
-            body: 'Changes saved Successfully',
+            body: 'Organization saved successfully',
             autohide: true,
             delay: 1500
           });
-          // Reload the DataTable data without refreshing the entire page
           table.ajax.reload(null, false);
+        },
+        error: function(xhr, status, error) {
+          showDangerToast("Error saving organization");
         }
       });
     });
+
+
+    // Validate mandatory fields for the add function
+    function validateAddForm() {
+      // Assuming your input fields have these IDs: orgName, address, adminUser, logo, theme
+      var orgName = $('#orgName').val().trim();
+      var address = $('#orgAddress').val().trim();
+      var adminUser = $('#adminUser').val().trim();
+      var logo = $('#orgLogo').val().trim();
+      var theme = $('#orgTheme').val().trim();
+      if ($('#adminUserField').is(":visible")) {
+       if ( adminUser === '') {
+        showDangerToast('Admin User is required.');
+        return false;
+       }
+      }
+
+      if (orgName === '' || address === '' ||  logo === '' || theme === '') {
+        showDangerToast('All fields (Org Name, Address, Logo, Theme) are required.');
+        return false;
+      }
+      return true;
+    }
+
+    // Validate mandatory fields for the edit function
+    function validateEditForm() {
+      // Use the same selectors or adjust if your edit form has different IDs
+      var orgName = $('#orgName').val().trim();
+      var address = $('#orgAddress').val().trim();
+      var adminUser = $('#adminUser').val().trim();
+      var logo = $('#orgLogo').val().trim();
+      var theme = $('#orgTheme').val().trim();
+
+
+      if (orgName === '' || address === '' || adminUser === '' || theme === '') {
+        showDangerToast('Please fill in all fields before updating.');
+        return false;
+      }
+      return true;
+    }
+
+    $('#addForm').on('submit', function(e) {
+      if (!validateAddForm()) {
+        e.preventDefault();
+      }
+    });
+
+    $('#editForm').on('submit', function(e) {
+      if (!validateEditForm()) {
+        e.preventDefault();
+      }
+    });
+
   });
 </script>
 </body>

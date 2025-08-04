@@ -1,52 +1,22 @@
 package com.dev.cms.model;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
-
 import java.time.Instant;
 
-@Entity
-@Table(name = "post")
-public class Post {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id", nullable = false)
+
+public class TimelineResponse {
     private Integer id;
-
-    @Column(name = "title", nullable = false, length = 45)
     private String title;
-
-    @Lob
-    @Column(name = "content", nullable = false)
     private String content;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
     private User author;
-
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at")
     private Instant createdAt;
-
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "updated_at")
     private Instant updatedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "team_id", nullable = false)
     private Team team;
-
-    @ColumnDefault("0")
-    @Column(name = "c_upvote")
     private Integer cUpvote;
-
-    @ColumnDefault("0")
-    @Column(name = "c_downvote")
     private Integer cDownvote;
-
-    @ColumnDefault("0")
-    @Column(name = "c_comment")
     private Integer cComment;
+    private Boolean upvoted;
+    private Boolean downvoted;
+
 
     public Integer getId() {
         return id;
@@ -127,5 +97,23 @@ public class Post {
     public void setCComment(Integer cComment) {
         this.cComment = cComment;
     }
+
+    public Boolean getUpvoted() {
+        return upvoted;
+    }
+
+    public void setUpvoted(Boolean upvoted) {
+        this.upvoted = upvoted;
+    }
+
+    public Boolean getDownvoted() {
+        return downvoted;
+    }
+
+    public void setDownvoted(Boolean downvoted) {
+        this.downvoted = downvoted;
+    }
+
+    
 
 }

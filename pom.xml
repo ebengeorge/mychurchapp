@@ -13,7 +13,6 @@
 	<artifactId>cms</artifactId>
 	<!-- Change packaging to war for JSP support -->
 	<packaging>war</packaging>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>cms</name>
 	<description>Content Management Service</description>
 	<properties>
@@ -51,11 +50,20 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
 		<!-- Use the starter for Spring Security (which brings in the Jakarta‑compatible version) -->
 		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>6.4.5</version>
+		</dependency>
+
 		<!-- Spring Boot Data JPA -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

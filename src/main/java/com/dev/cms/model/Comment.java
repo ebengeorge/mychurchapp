@@ -3,6 +3,8 @@ package com.dev.cms.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.Instant;
 
 @Entity
@@ -12,7 +14,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id", nullable = false)
     private Integer id;
-
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
@@ -80,5 +82,13 @@ public class Comment {
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "Comment [id=" + id + ", post=" + post + ", user=" + user + ", content=" + content + ", createdAt="
+                + createdAt + ", updatedAt=" + updatedAt + "]";
+    }
+
+    
 
 }

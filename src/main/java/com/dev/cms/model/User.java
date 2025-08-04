@@ -39,7 +39,6 @@ public class User {
     @Column(name = "is_active")
     private Byte isActive;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "org_id", nullable = false)
     private Organization org;

@@ -3,14 +3,121 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Timeline</title>
+    <title> Ministry Web | Timeline</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/cms/plugins/fontawesome-free/css/all.min.css">
     <!-- AdminLTE CSS -->
-    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="/cms/dist/css/adminlte.min.css">
+    <style>
+        .user-initial {
+            width: 30px;  /* Adjust the size of the circle */
+            height: 30px;  /* Adjust the size of the circle */
+            background-color: #007bff;  /* Background color for the circle */
+            color: white;  /* Text color inside the circle */
+            display: flex;
+            justify-content: center;  /* Horizontally center the text */
+            align-items: center;  /* Vertically center the text */
+            border-radius: 50%;  /* Makes it circular */
+            font-size: 18px;  /* Font size for the letter */
+            font-weight: bold;
+        }
+        
+   
+       /* Style the button */
+        .upvoteBtn {
+            display: inline-block; /* Make sure the button behaves like an inline element */
+            color: #999 !important; /* Default icon and text color */
+            transition: all 0.3s ease; /* Smooth transition */
+            cursor: pointer; /* Indicate that it's clickable */
+        }
+
+        /* Style for the icon inside the button */
+        .upvoteBtn i {
+            color: #999; /* Default icon color */
+            transition: all 0.3s ease; /* Smooth transition for color and border changes */
+            font-weight: 100 !important;
+        }
+
+        /* Change icon and border color when upvoted (active) */
+        .upvoteBtn.active i {
+            color: #28a745; /* Red color for active state */
+            border-color: #28a745; /* Red border for the icon */
+            font-weight: 900 !important;
+        }
+
+        /* Hover effect for the button */
+        .upvoteBtn:hover {
+            color: #28a745; /* Change text color on hover */
+        }
+
+        /* Hover effect for the icon */
+        .upvoteBtn:hover i {
+            color: #28a745; /* Change icon color on hover */
+            font-weight: 900 !important;
+        }
+
+        .downvoteBtn {
+            display: inline-block; /* Make sure the button behaves like an inline element */
+            color: #999 !important; /* Default icon and text color */
+            transition: all 0.3s ease; /* Smooth transition */
+            cursor: pointer; /* Indicate that it's clickable */
+       }
+
+        /* Style for the icon inside the button */
+        .downvoteBtn i {
+            color: #999; /* Default icon color */
+            transition: all 0.3s ease; /* Smooth transition for color and border changes */
+            font-weight: 100 !important;
+        }
+
+        /* Change icon and border color when upvoted (active) */
+        .downvoteBtn.active i {
+            color: #dc3545; /* Red color for active state */
+            border-color: #dc3545; /* Red border for the icon */
+            font-weight: 900 !important;
+        }
+
+        /* Hover effect for the button */
+        .downvoteBtn:hover {
+            color: #dc3545; /* Change text color on hover */
+        }
+
+        /* Hover effect for the icon */
+        .downvoteBtn:hover i {
+            color: #dc3545; /* Change icon color on hover */
+            font-weight: 900 !important;
+        }
+
+        .cmnt-btn {
+            display: inline-block; /* Make sure the button behaves like an inline element */
+            color: #999 !important; /* Default icon and text color */
+            transition: all 0.3s ease; /* Smooth transition */
+            cursor: pointer; /* Indicate that it's clickable */
+        }
+
+        /* Style for the icon inside the button */
+        .cmnt-btn i {
+            font-weight: 100 !important; 
+            color: #999; /* Default icon color */
+            transition: all 0.3s ease; /* Smooth transition for color and border changes */
+            font-weight: 100 !important;
+        }
+
+        /* Hover effect for the button */
+        .cmnt-btn:hover {
+            color: #007bff; /* Change text color on hover */
+            
+        }
+
+        /* Hover effect for the icon */
+        .cmnt-btn:hover i {
+            color: #007bff; /* Change icon color on hover */
+            font-weight: 900 !important;
+        }
+    </style>
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
@@ -51,7 +158,7 @@
             <div class="container-fluid">
                 <!-- Button to trigger Create Post modal -->
                 <div class="mb-3">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPostModal">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPostModal" id="create-post">
                         Create New Post
                     </button>
                 </div>
@@ -118,11 +225,8 @@
                         <div class="form-group">
                             <label for="modalPostTo">Post To</label>
                             <select class="form-control" id="modalPostTo" name="team.id">
-                                <option value="1">Timeline</option>
-                                <option value="2">Announcements</option>
-                                <option value="3">Events</option>
                             </select>
-                            <input type="hidden" name="author.id" value="1">
+                            <input type="hidden" name="author.id" value='${sessionScope.userId}'>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -135,11 +239,42 @@
     </div>
     <!-- End Create Post Modal -->
 
+    <div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="commentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentsModalLabel">Comments for Post</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Comments List -->
+                    <div id="commentsList" class="card-comments card-body">
+                        <!-- Dynamic content will be injected here -->
+                    </div>
+                    <div class="card-footer">
+                        <form action="#" method="post" id="commentform">
+                          <div class="input-group">
+                            <input type="hidden" name="post.id" id="cmntPostId">
+                            <input type="hidden" name="user.id" id="cmntUsrId"  value='${sessionScope.userId}'>
+                            <input type="text" name="content" id="cmntContent" placeholder="Comment here ..." class="form-control">
+                            <span class="input-group-append">
+                              <button type="submit" id="sbtComment" class="btn btn-primary">Comment</button>
+                            </span>
+                          </div>
+                        </form>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="main-footer">
         <div class="float-right d-none d-sm-block">
             <b>Version</b> 3.2.0
         </div>
-        <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+        <a href="https://adminlte.io"></a>
     </footer>
 
     <!-- Control Sidebar -->
@@ -151,15 +286,18 @@
 <!-- ./wrapper -->
 
 <!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
+<script src="/cms/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/cms/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
+<script src="/cms/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
-<script src="app.js"></script>
+<script src="/cms/dist/js/demo.js"></script>
+<script src="/cms/app.js"></script>
 <script>
+var teamData = $('#user-teams').val();
+var teams = JSON.parse(teamData);
+
      function timeAgo(timestamp) {
         const now = new Date();
         const date = new Date(timestamp);
@@ -188,27 +326,154 @@
         }
     }
 
-    $(document).ready(function() {
-
+    function saveReaction(postId, reaction) {
+        var dataObj = {};
+        dataObj.reactionType = reaction;
+        dataObj.post =  {id:postId};
+        dataObj.user = {id:$('#userId').val()};
         $.ajax({
-            url: '/api/post/timeline',  // URL to your API endpoint
-            type: 'GET',
+                url: '/cms/api/reaction/save', 
+                type: 'POST',
+                data:  JSON.stringify(dataObj),
+                dataType : 'json',
+                contentType: 'application/json',
+                success: function(response) {
+                                    
+                },
+                error: function() {
+                    $(document).Toasts('create', {
+                                class: 'bg-danger',
+                                title: 'Error',
+                                body: 'Error saving reaction',
+                                autohide: true,
+                                delay: 1500
+                            });
+                }
+        });
+    }
+
+    
+    function removeReaction(postId, reaction) {
+        var dataObj = {};
+        dataObj.reactionType = reaction;
+        dataObj.post =  {id:postId};
+        dataObj.user = {id:$('#userId').val()};
+        $.ajax({
+                url: '/cms/api/reaction/delete',
+                type: 'DELETE',
+                data:  JSON.stringify(dataObj),
+                dataType : 'json',
+                contentType: 'application/json',
+                success: function(response) {
+                                    
+                },
+                error: function() {
+                    $(document).Toasts('create', {
+                                class: 'bg-danger',
+                                title: 'Error',
+                                body: 'Error removing reaction',
+                                autohide: true,
+                                delay: 1500
+                            });
+                }
+        });
+    }
+    function loadPosts(groups){
+        $.ajax({
+            url: '/cms/api/post/timeline',  // URL to your API endpoint
+            type: 'POST',
             dataType: 'json',
+            data: JSON.stringify(groups),
+            contentType: 'application/json',
+            async: 'false',
             success: function(posts) {
                 renderTimelinePosts(posts);
             },
             error: function(xhr, status, error) {
+                $(document).Toasts('create', {
+                                class: 'bg-danger',
+                                title: 'Error',
+                                body: 'Error fetching posts',
+                                autohide: true,
+                                delay: 1500
+                            });
                 console.error("Error fetching posts:", error);
             }
         });
+    }
+
+
+    $(document).ready(function() {
+        var groups = [];
+      
+        $.each(teams, function(teamId, teamName) {
+            groups.push(parseInt(teamId));
+        });
+
+        $.each(teams, function(teamId, teamName) {
+            $('#modalPostTo').append( $('<option></option>').val(teamId).text(teamName));
+        });
+
+        loadPosts(groups);
+
+        $(document).on('click', '.cmnt-btn', function(e) {
+                e.preventDefault();
+                const postId = $(this).data('id');  // Get the post ID from button data attribute
+                loadComments(postId);  // Load comments for the selected post
+        });
+
+        // $(document).on('click', '.downvoteBtn', function(e) {
+        //     const postId = $(this).data('id'); 
+        //     saveReaction(postId, 'N');
+        //     $(this).toggleClass('active'); 
+        // });
+
+        $(document).on('click', '.downvoteBtn', function(e) {
+            const postId = $(this).data('id'); 
+            if ($(this).hasClass('active')) {
+                $(this).removeClass('active'); 
+                removeReaction(postId, 'N');
+            } else {
+                var  upvoteBtn = $('.upvoteBtn[data-id="' + postId + '"]');
+                if ($(upvoteBtn).hasClass('active')) {
+                    (upvoteBtn).removeClass('active');
+                    removeReaction(postId, 'Y');
+                }
+                saveReaction(postId, 'N');
+                $(this).addClass('active'); 
+            }
+        });
+
+        // $(document).on('click', '.upvoteBtn', function(e) {
+        //     const postId = $(this).data('id'); 
+        //     saveReaction(postId, 'Y');
+        //     $(this).toggleClass('active'); 
+        // });
+
+        $(document).on('click', '.upvoteBtn', function(e) {
+            const postId = $(this).data('id'); 
+            if ($(this).hasClass('active')) {
+                $(this).removeClass('active'); 
+                removeReaction(postId, 'Y');
+            } else {
+                var  downvoteBtn = $('.downvoteBtn[data-id="' + postId + '"]');
+                if ($(downvoteBtn).hasClass('active')) {
+                    (downvoteBtn).removeClass('active');
+                    removeReaction(postId, 'N');
+                }
+                saveReaction(postId, 'Y');
+                $(this).addClass('active'); 
+            }
+        });
+
+       
+
         // Attach a submit handler to the form in the modal
         $("#createPostModal form").submit(function(e) {
             e.preventDefault(); // Prevent the default form submission
-
             var form = $(this);
-
             $.ajax({
-                url: "/api/post/save", // Use the form's action URL
+                url: "/cms/api/post/save", // Use the form's action URL
                 type: "POST",
                 data: convertToJson("createPostForm"),  // convertToJson should serialize your form data appropriately
                 dataType: 'json',
@@ -221,17 +486,61 @@
                     $(document).Toasts('create', {
                         class: 'bg-success',
                         title: 'Success',
-                        body: 'Changes saved Successfully',
+                        body: 'Posted Successfully',
                         autohide: true,
                         delay: 1500
                     });
+                    loadPosts(groups);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
+                    $(document).Toasts('create', {
+                                class: 'bg-danger',
+                                title: 'Error',
+                                body: 'Error saving post',
+                                autohide: true,
+                                delay: 1500
+                            });
                     console.error("Error submitting form:", textStatus, errorThrown);
                 }
             });
         });
+
+
+        $('#sbtComment').click(function(e) {
+            e.preventDefault();
+                $.ajax({
+                        type: "POST",
+                        url: "/cms/api/comment/save",  
+                        data: convertToJson("commentform"),  
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function(data) {
+                            $('#modal-xl').modal('hide');
+                            $(document).Toasts('create', {
+                                class: 'bg-success',
+                                title: 'Success',
+                                body: 'Comment saved Successfully',
+                                autohide: true,
+                                delay: 1500
+                            });
+                            $('#cmntContent').val("");
+                            loadComments($('#cmntPostId').val());
+                        },
+                        error: function(xhr, status, error) {
+                            // Show an error toast in case of failure
+                            $(document).Toasts('create', {
+                                class: 'bg-danger',
+                                title: 'Error',
+                                body: 'Error saving comment',
+                                autohide: true,
+                                delay: 1500
+                            });
+                        }
+                });
+        });
     });
+
+
     function renderTimelinePosts(posts) {
         var container = $('#cmstimeline'); // The container where posts will be rendered
         container.empty(); // Clear any existing content
@@ -304,29 +613,65 @@
             // Create and append the footer with buttons
             var footerDiv = $('<div></div>').addClass('timeline-footer');
 
-            var upvoteBtn = $('<a></a>')
-                .addClass('btn btn-success btn-sm')
-                .attr('href', '')
-                .append($('<i></i>').addClass('fa fa-thumbs-up'))
-                .append(' Upvote');
+            // var upvoteBtn = $('<a></a>')
+            //     .addClass('btn upvoteBtn')
+            //     .attr('data-id', post.id)
+            //     .append(post.cupvote + "&nbsp;&nbsp;")
+            //     .append($('<i></i>').addClass('fa fa-thumbs-up'));
+            // if(post.upvoted) {
+            //     upvoteBtn.addClass('active')
+            // }
 
+            // Assuming post.id, post.cupvote, and post.upvoted are defined
+            var upvoteBtn = $('<a></a>')
+                .addClass('btn upvoteBtn')
+                .attr('data-id', post.id);
+
+            var countSpan = $('<span></span>')
+                .addClass('count')
+                .text(post.cupvote);
+
+            upvoteBtn
+                .append(countSpan)         // add the count span
+                .append("&nbsp;&nbsp;")     // add two non-breaking spaces
+                .append($('<i></i>').addClass('fa fa-thumbs-up')); // add the icon
+
+            if (post.upvoted) {
+                upvoteBtn.addClass('active');
+            }
+
+
+            // Assuming post.id, post.cdownvote, and post.downvoted are defined
             var downvoteBtn = $('<a></a>')
-                .addClass('btn btn-danger btn-sm')
-                .attr('href', '')
-                .append($('<i></i>').addClass('fa fa-thumbs-down'))
-                .append(' Downvote');
+                .addClass('btn downvoteBtn')
+                .attr('data-id', post.id);
+
+            var countSpan = $('<span></span>')
+                .addClass('count')
+                .text(post.cdownvote);  // for example, -1
+
+            downvoteBtn
+                .append(countSpan)         // add the count span
+                .append("&nbsp;&nbsp;")     // add two non-breaking spaces
+                .append($('<i></i>').addClass('fa fa-thumbs-down')); // add the icon
+
+            if (post.downvoted) {
+                downvoteBtn.addClass('active');
+            }
+
 
             var commentBtn = $('<a></a>')
-                .addClass('btn btn-info btn-sm')
-                .attr('href', '')
-                .append($('<i></i>').addClass('fa fa-comment'))
-                .append(' Comment');
+                .addClass('btn cmnt-btn float-right')
+                .attr('data-id', post.id)
+                .append(post.ccomment + "&nbsp;&nbsp;")
+                .append($('<i></i>').addClass('fa fa-comment'));
 
             footerDiv.append(upvoteBtn)
                 .append(' ')
                 .append(downvoteBtn)
                 .append(' ')
                 .append(commentBtn);
+
             timelineItem.append(footerDiv);
 
             // Append the timeline item to the outer div
@@ -336,6 +681,46 @@
             container.append(postDiv);
         });
     }
+
+            function loadComments(postId) {
+                const apiUrl = `/cms/api/post/comments/`+postId;
+                $.ajax({
+                    url: apiUrl,
+                    method: 'GET',
+                    success: function(comments) {
+                        $('#cmntPostId').val(postId);
+                        generateComments(comments);  // Call function to generate HTML for comments
+                        $('#commentsModal').modal('show');  // Show the modal
+                    },
+                    error: function() {
+                        alert('Failed to load comments.');
+                    }
+                });
+            }
+
+            // Function to generate comments dynamically in HTML
+            function generateComments(comments) {
+                // Empty the comments container
+                $('#commentsList').empty();
+                if(comments.length == 0) {
+                    $('#commentsList').append('<div class="alert alert-light">No comments on this post yet.</div>');
+                } else {
+                    comments.forEach(function(comment) {
+                        const userInitial = comment.user.username.charAt(0).toUpperCase();  // Get the first letter of the user's name
+                        var html = '<div class="card-comment">';
+                        html += '<!-- User initial inside a circle -->';
+                        html += '<div class="user-initial img-circle img-sm">' + (userInitial) + '</div>';
+                        html += '<div class="comment-text">';
+                        html += '<span class="username">' + comment.user.username;
+                        html += '<span class="text-muted float-right">' + timeAgo(comment.createdAt) + '</span>';
+                        html += '</span><!-- /.username -->';
+                        html += '<p>' + comment.content + '</p>';
+                        html += '</div><!-- /.comment-text -->';
+                        html += '</div><!-- /.card-comment -->';
+                        $('#commentsList').append(html);
+                    });
+                }   
+            }
 
 </script>
 </body>

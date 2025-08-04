@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dev.cms.model.Organization;
 import com.dev.cms.model.Post;
 import com.dev.cms.model.User;
 import com.dev.cms.model.UserTeam;
 import com.dev.cms.service.PostService;
+import com.dev.cms.utils.EncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -38,7 +40,7 @@ public class WebController {
 		if( null == session.getAttribute("userId")) {
 			return "login";
 		}
-		return "redirect:/dashboard";
+		return "redirect:/timeline";
 	}
 
 	@GetMapping("/dashboard")
@@ -62,15 +64,32 @@ public class WebController {
 		return "admin";
 	}
 
-	@GetMapping("/teamAdmin")
+	@GetMapping("/teams")
 	public String teamAdmin(HttpSession session) {
 		// Ensure that the user is logged in before displaying the team admin page.
 		if (session.getAttribute("userId") == null) {
 			return "redirect:/";
 		}
+		if(session.getAttribute("role").equals("user")) {
+			return "redirect:/";
+		}
 		// "teamAdmin" is the logical view name that your view resolver will map to /WEB-INF/views/teamAdmin.jsp (for example)
 		return "teamAdmin";
 	}
+
+	@GetMapping("/users")
+	public String userAdmin(HttpSession session) {
+		// Ensure that the user is logged in before displaying the team admin page.
+		if (session.getAttribute("userId") == null) {
+			return "redirect:/";
+		}
+		if(session.getAttribute("role").equals("user")) {
+			return "redirect:/";
+		}
+		// "teamAdmin" is the logical view name that your view resolver will map to /WEB-INF/views/teamAdmin.jsp (for example)
+		return "userAdmin";
+	}
+
 
 
 	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -79,19 +98,32 @@ public class WebController {
 		try {
 		List<User> users = userService.findByEmailId(userId);
 		if (users != null && !users.isEmpty()){
-			if(users.get(0).getPassword().equals(pwd)){
-				System.out.println("successfully logged in " + userId);
+			User user = users.get(0);
+			if (user.getIsActive() == null || user.getIsActive().byteValue() == 0) {
+				model.addAttribute("message", "User has been deactivated");
+				return "login";
+			}
+			Organization org = user.getOrg();
+			if (org == null || org.getIsActive() == null || !org.getIsActive()) {
+				model.addAttribute("message", "Your organization has been deactivated");
+				return "login";
+			}
+			if (EncryptionUtil.matches(pwd, user.getPassword())) {
+				System.out.println("Successfully logged in " + userId);
 				List<UserTeam> utList = userTeamService.findByUser(users.get(0));
 				Map<Integer, String> userTeamMap = new HashMap<Integer, String>();
 				for (UserTeam uTeam : utList) {
-					userTeamMap.put(uTeam.getTeam().getId(), uTeam.getTeam().getName());
+					if(uTeam.getTeam().getIsActive()){
+						userTeamMap.put(uTeam.getTeam().getId(), uTeam.getTeam().getName());
+					}
 				}
 				String json = Utils.toJson(userTeamMap);
 				session.setAttribute("userId", users.getFirst().getId());
-				session.setAttribute("userName", userId);
 				session.setAttribute("userName", users.get(0).getUsername());
 				session.setAttribute("orgName", users.get(0).getOrg().getOrgName());
 				session.setAttribute("orgId", users.get(0).getOrg().getId());
+				session.setAttribute("orgLogo", users.get(0).getOrg().getImgUrl());
+				session.setAttribute("orgTheme", users.get(0).getOrg().getTheme());
 				session.setAttribute("role", users.get(0).getRole());
 				session.setAttribute("teams", json);
 
@@ -99,7 +131,7 @@ public class WebController {
 				 {
 				 	return "redirect:/organization";
 				 }
-				return "redirect:/dashboard";
+				return "redirect:/timeline";
 			}
 		}
 		model.addAttribute("message", "Invalid email/password, try again");

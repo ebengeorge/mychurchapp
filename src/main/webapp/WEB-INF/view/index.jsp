@@ -27,6 +27,26 @@
   <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
   <!-- summernote -->
   <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
+  <style>
+    /* Default primary color */
+    :root {
+      --primary-color: #007bff; /* Default blue */
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+      color: var(--primary-color);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .card-header {
+      background-color: var(--primary-color);
+      color: white;
+    }
+  </style>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -65,13 +85,60 @@
 
       <!-- Main content -->
       <section class="content">
-        
+
+<%--        <!-- Theme Selection Buttons (for example) -->--%>
+<%--        <div class="theme-buttons">--%>
+<%--          <button onclick="changeThemeColor('blue')">Blue</button>--%>
+<%--          <button onclick="changeThemeColor('green')">Green</button>--%>
+<%--          <button onclick="changeThemeColor('red')">Red</button>--%>
+<%--          <button onclick="changeThemeColor('purple')">Purple</button>--%>
+<%--        </div>--%>
+
+<%--        <script>--%>
+<%--          // Function to change the theme color--%>
+<%--          function changeThemeColor(color) {--%>
+<%--            // Set the primary color in the root CSS variable--%>
+<%--            let primaryColor = '';--%>
+
+<%--            switch (color) {--%>
+<%--              case 'blue':--%>
+<%--                primaryColor = '#007bff';--%>
+<%--                break;--%>
+<%--              case 'green':--%>
+<%--                primaryColor = '#28a745';--%>
+<%--                break;--%>
+<%--              case 'red':--%>
+<%--                primaryColor = '#dc3545';--%>
+<%--                break;--%>
+<%--              case 'purple':--%>
+<%--                primaryColor = '#6f42c1';--%>
+<%--                break;--%>
+<%--              default:--%>
+<%--                primaryColor = '#007bff'; // Default to blue--%>
+<%--            }--%>
+
+<%--            // Set the primary color in CSS variable--%>
+<%--            document.documentElement.style.setProperty('--primary-color', primaryColor);--%>
+
+<%--            // Store the selected theme in localStorage to persist across page reloads--%>
+<%--            localStorage.setItem('themeColor', color);--%>
+<%--          }--%>
+
+<%--          // On page load, check if a theme was previously saved in localStorage--%>
+<%--          window.onload = function() {--%>
+<%--            const savedTheme = localStorage.getItem('themeColor');--%>
+<%--            if (savedTheme) {--%>
+<%--              changeThemeColor(savedTheme); // Apply the saved theme--%>
+<%--            }--%>
+<%--          };--%>
+<%--        </script>--%>
+
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
   <footer class="main-footer">
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+    <a href="https://adminlte.io"></a>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
       <b>Version</b> 3.2.0

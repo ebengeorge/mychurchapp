@@ -1,11 +1,41 @@
+
+$(function () {
+    if($('#orgTheme').val()=="dark") {
+        $('body').addClass('dark-mode');
+        $('.main-header').removeClass('navbar-white');
+        $('.main-header').removeClass('navbar-light');
+        $('.main-header').addClass('navbar-dark');
+    }
+    loadImage($("#orglogo").attr('data-imgUrl'), 'orglogo');
+
+    if($("#user-role").data("role")=="user"){
+        $('#create-post').hide();
+        $('#create-event').hide();
+        $('#update-event').hide();
+        $('#userMenu li').each(function(i, obj) {
+            var menuLabel = $(obj).find('a > p').text().trim();
+            if(menuLabel=="User Management" || menuLabel=="Team Management"){
+                $(obj).hide();
+            }
+        });
+        $('#eventForm').find('input[type="text"], textarea').each(function(){
+            $(this)
+                .prop('readonly', true)
+                .removeClass('form-control')
+                .addClass('form-control-plaintext text-white');
+        });
+
+    }
+});
+
 function submitLogout() {
     const form = document.getElementById('logoutform');
     form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      
+        event.preventDefault();
+
     });
     form.submit();
-  }
+}
 
 function convertToJson(formId) {
     let form = document.getElementById(formId);
@@ -53,6 +83,37 @@ function confirmationBox(callback, parameter) {
     $("#confirmationYes").off('click');
     $("#confirmationYes").on('click', function(){
         callback(parameter);
-        $('#confirmationBox').modal('hide');
+        $('#confirmationBox').modal('hide')
     });
 }
+
+
+function loadImage(filename, imgElementId) {
+    fetch('/cms/api/download/' + encodeURIComponent(filename))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok: " + response.statusText);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Create a local URL for the image blob
+            const objectURL = URL.createObjectURL(blob);
+            // Set the src attribute of the image element
+            document.getElementById(imgElementId).src = objectURL;
+        })
+        .catch(error => {
+            console.error('Error fetching image:', error);
+        });
+}
+
+function showDangerToast(message) {
+    $(document).Toasts('create', {
+        class: 'bg-danger',
+        title: 'Validation Error',
+        body: message,
+        autohide: true,
+        delay: 3000
+    });
+}
+

@@ -26,6 +26,8 @@ public class TeamController {
 
     @PostMapping
     public Team saveDepartment(@RequestBody Team team) {
+        team.setIsActive(true);
+        team.setIsDefault((byte) 0);
         return teamService.save(team);
     }
 

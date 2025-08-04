@@ -25,7 +25,7 @@
               </h3>
               <!-- Display the user's role (capitalized) and organization -->
               <p class="text-sm text-muted">
-                <span style="text-transform: capitalize"> ${role}</span> |  ${sessionScope.orgName}
+                <span style="text-transform: capitalize" data-role="${role}" id="user-role"> ${role}</span> |  ${sessionScope.orgName}
               </p>
             </div>
           </div>
@@ -44,6 +44,7 @@
   </ul>
   <!-- Hidden input storing user's team data from session -->
   <input type="hidden" value='${sessionScope.teams}' id="user-teams">
+  <input type="hidden" id="orgTheme"  value='${sessionScope.orgTheme}'>
 </nav>
 <!-- End of main navigation bar -->
 

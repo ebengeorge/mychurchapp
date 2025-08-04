@@ -1,65 +1,43 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Metadata and responsive configuration -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CMS | Organization Dashboard</title>
-
+  <title> Ministry Web | Team Admin</title>
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-  <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Font Awesome for icon fonts -->
+  <link rel="stylesheet" href="/cms/plugins/fontawesome-free/css/all.min.css">
+  <!-- DataTables CSS for table styling -->
+  <link rel="stylesheet" href="/cms/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/cms/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/cms/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Select2 CSS for enhanced select dropdowns -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
-
-  <!-- Theme style -->
-  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+  <!-- AdminLTE Theme style -->
+  <link rel="stylesheet" href="/cms/dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
-  <!-- Navbar (reuse your existing navbar code) -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="margin: 0;">
-    <h4 style="margin: 5px;"> CMS Organization Admin</h4>
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-user"></i>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">
-            <div class="media">
-              <div class="media-body">
-                <p class="text-sm">Logged In</p>
-                <h3 class="dropdown-item-title">
-                  ${sessionScope.userName}
-                </h3>
-                <p class="text-sm text-muted"><span style="text-transform: capitalize"> ${role}</span> | ${sessionScope.orgName}</p>
-              </div>
-            </div>
-          </span>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer" onclick="submitLogout()">Logout</a>
-          <form id="logoutform" action="logout" method="POST">
-            <input type="hidden" name="userId" value="${sessionScope.userName}">
-          </form>
-        </div>
-      </li>
-    </ul>
-  </nav>
-  <!-- Content Wrapper -->
-  <div class="content-wrapper" style="margin: 0 !important;">
+  <%@ include file="header.jsp" %>
+  <%@ include file="sidebar.jsp" %>
+  <div class="content-wrapper">
+    <!-- Content Header Section -->
     <section class="content-header">
       <div class="container-fluid">
-        <div class="row mb-2"></div>
+        <div class="row mb-2">
+          <!-- Breadcrumbs or page title can be added here -->
+        </div>
       </div>
     </section>
+    <!-- Main content section -->
     <section class="content">
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
+            <!-- Card container for managing teams -->
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Manage Teams</h3>
@@ -75,6 +53,7 @@
                   </tr>
                   </thead>
                   <tbody>
+                  <!-- Table body will be dynamically filled -->
                   </tbody>
                   <tfoot>
                   <tr>
@@ -92,7 +71,7 @@
     </section>
   </div>
 
-  <!-- Team Modal -->
+  <!-- Modal for adding or editing a team -->
   <div class="modal fade" id="teamModal" tabindex="-1" role="dialog" aria-labelledby="teamModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content">
@@ -111,7 +90,7 @@
             </div>
             <div class="form-group">
               <label for="teamDescription">Description</label>
-              <textarea class="form-control" id="teamDescription" name="teamDescription" rows="3"></textarea>
+              <textarea class="form-control" id="teamDescription" name="teamDescription" rows="3" required></textarea>
             </div>
           </div>
           <div class="modal-footer">
@@ -123,116 +102,93 @@
     </div>
   </div>
 
-<!-- Modal Structure -->
-<div class="modal fade" id="assignUserModal" tabindex="-1" aria-labelledby="assignUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <!-- Modal for assigning users to a team -->
+  <div class="modal fade" id="assignUserModal" tabindex="-1" aria-labelledby="assignUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="assignUserModalLabel">Assign Users to Team</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
+        <div class="modal-header">
+          <h5 class="modal-title" id="assignUserModalLabel">Assign Users to Team</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="teamSelect" value="">
+          <div class="form-group">
+            <label for="userSelect">Select Users</label>
+            <select id="userSelect" class="form-control" multiple="multiple" style="width: 100%;">
+              <!-- Options will be dynamically populated via AJAX -->
+            </select>
           </div>
-          <div class="modal-body">
-              <!-- Hidden Team Selection -->
-              <input type="hidden" id="teamSelect" value="">
-
-              <!-- User Selection -->
-             
-              <div class="form-group">
-                  <label for="userSelect">Select Users</label>
-                  <select id="userSelect" class="form-control" multiple="multiple" style="width: 100%;">
-                      <!-- Options will be populated dynamically -->
-                  </select>
-              </div>
-
-              <div id="userListSection" class="mb-3">
-                <h5>Mapped Users</h5>
-                <ul id="userList" class="list-group">
-                    <!-- Users will be populated dynamically -->
-                </ul>
-            </div>
+          <div id="userListSection" class="mb-3">
+            <h5>Mapped Users</h5>
+            <ul id="userList" class="list-group">
+              <!-- User list items added dynamically -->
+            </ul>
           </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
       </div>
+    </div>
   </div>
 </div>
 
-  <!-- Footer / Additional Modals can be added here if needed -->
-</div>
-
-<!-- Embedded JavaScript -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-<script src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-<script src="../../plugins/jszip/jszip.min.js"></script>
-<script src="../../plugins/pdfmake/pdfmake.min.js"></script>
-<script src="../../plugins/pdfmake/vfs_fonts.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
-<script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-<script src="../../dist/js/adminlte.min.js"></script>
+<!-- External JavaScript libraries and plugins -->
+<script src="/cms/plugins/jquery/jquery.min.js"></script>
+<script src="/cms/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/cms/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/cms/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/cms/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/cms/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/cms/plugins/jszip/jszip.min.js"></script>
+<script src="/cms/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/cms/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/cms/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="/cms/dist/js/adminlte.min.js"></script>
 <script src="app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
-  function setTeamAndOpenModal(team) {
-    // Set the team value in the hidden field
-    $('#teamSelect').val(team);
-
-    // Optionally, you can set a label or some visual indicator to show which team is being assigned
-    $('#assignUserModalLabel').text('Assign Users to ' + team);
-
+  // Function to set team data and open the assign user modal
+  function setTeamAndOpenModal(teamId, teamName) {
+    $('#teamSelect').val(teamId);
+    $('#assignUserModalLabel').text('Assign Users to ' + teamName);
     $('#userList').empty();
-
     $.ajax({
-      url: '/api/user/team/' + team,  // Endpoint to fetch mapped users based on team ID
+      url: '/cms/api/user/team/' + teamId,
       method: 'GET',
       dataType: 'json',
       success: function(data) {
-        // Clear the current list of users
         $('#userList').empty();
-
         if (data.length === 0) {
           $('#userList').append('<strong class="list-group-item">No users mapped to this team.</strong>');
         } else {
-          // Add each user to the list
           data.forEach(function(user) {
             var userItem = $('<li class="list-group-item" data-id="'+ user.id +'"></li>');
-            userItem.text(user.username); // Display user username
-
-            // Create the remove button
+            userItem.text(user.username);
             var removeButton = $('<button class="btn btn-danger btn-sm ml-2 float-right rmv-mapping">Remove</button>');
-
-            // Add remove button to the user item
-            userItem.append(removeButton);
-
-            // Add click event to remove button
             removeButton.on('click', function() {
               var btn = $(this);
               $.ajax({
-                url: '/api/userTeam/' + $(btn).parents('li').data('id') + "/" +  team,  
+                url: '/cms/api/userTeam/' + $(btn).parents('li').data('id') + "/" +  teamId,
                 method: 'DELETE',
                 success: function(response) {
-                    console.log('Event deleted successfully');
-                    $(btn).parents('li').remove();
-                    if ($('#userList li').length == 0) {
-                      $('#userList').append('<strong class="list-group-item">No users mapped to this team.</strong>');
-                    }  
+                  $(btn).parents('li').remove();
+                  if ($('#userList li').length == 0) {
+                    $('#userList').append('<strong class="list-group-item">No users mapped to this team.</strong>');
+                  }
                 },
                 error: function(error) {
-                    console.error('Error deleting event:', error);
+                  console.error('Error deleting mapping:', error);
                 }
               });
             });
-
-            // Append the user item to the list
+            userItem.append(removeButton);
             $('#userList').append(userItem);
           });
         }
@@ -242,47 +198,47 @@
         alert("Error fetching mapped users.");
       }
     });
-
     $.ajax({
-        url: '/api/user/team/unassigned/'+ team,  // Your server endpoint to fetch users
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            // Empty the select element before adding new options
-            $('#userSelect').empty();
-
-            // Add options to the select element based on the AJAX response
-            data.forEach(function(user) {
-                var option = new Option(user.username, user.id, false, false);
-                $('#userSelect').append(option);
-            });
-
-            // Initialize Select2 after populating the options
-            $('#userSelect').select2({
-                placeholder: "Select users",
-                allowClear: true,
-                multiple: false 
-            });
-            $('#userSelect').val(null).trigger('change');
-        },
-        error: function(error) {
-            console.error("Error fetching users:", error);
-            alert("Error fetching users.");
-        }
+      url: '/cms/api/user/team/unassigned/' + teamId,
+      method: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        $('#userSelect').empty();
+        data.forEach(function(user) {
+          var option = new Option(user.username, user.id, false, false);
+          $('#userSelect').append(option);
+        });
+        $('#userSelect').select2({
+          placeholder: "Select users",
+          allowClear: true,
+          multiple: false
+        });
+        $('#userSelect').val(null).trigger('change');
+      },
+      error: function(error) {
+        console.error("Error fetching users:", error);
+        alert("Error fetching users.");
+      }
     });
     $('#assignUserModal').modal('show');
-}
+  }
 
-
+  // Validate team form fields similar to admin.jsp validation
+  function validateTeamForm() {
+    var teamName = $('#teamName').val().trim();
+    var teamDescription = $('#teamDescription').val().trim();
+    if (teamName === '' || teamDescription === '') {
+      showDangerToast('Team Name and Description are required.');
+      return false;
+    }
+    return true;
+  }
 
   $(function () {
-    // Get the organization id from the session
     var orgId = ${sessionScope.orgId};
-
-    // Initialize the DataTable for teams
     var table = $('#teamTable').DataTable({
       ajax: {
-        url: "/api/team?orgId=" + orgId,  // This endpoint should filter teams by orgId
+        url: "/cms/api/team?orgId=" + orgId,
         dataType: 'json',
         dataSrc: ""
       },
@@ -294,172 +250,182 @@
           render: function(data, type, row) {
             return '<button type="button" class="btn btn-primary editTeamBtn" data-id="'+ data +'">Edit</button>&nbsp;' +
                     '<button type="button" class="btn btn-danger deleteTeamBtn" data-id="'+ data +'">Delete</button>&nbsp;' +
-                    '<button type="button" class="btn btn-success assignBtn" data-id="'+ data +'">Assign</button>' ;
+                    '<button type="button"'
+                    + '  class="btn btn-success assignBtn"'
+                    + '  data-id   ="'+ row.id   +'"'
+                    + '  data-name ="'+ row.name +'">'
+                    + '  Assign'
+                    + '</button>';
           }
         }
       ]
     });
 
-      $('#userSelect').on('select2:select', function (e) {
-              var selectedUser = e.params.data; // The selected option's data
-              console.log("User selected:", selectedUser); 
-              var userItem = $('<li class="list-group-item data-id="'+selectedUser.id+'"></li>');
-              userItem.text(selectedUser.text); // Display user username
-              $.ajax({
-                  url: '/api/userTeam/' + selectedUser.id + "/" +  $('#teamSelect').val(),  
-                  type: 'POST',
-                  contentType: 'application/json',
-                  dataType: 'json',
-                  success: function(res) {
-                    $(document).Toasts('create', {
-                      class: 'bg-success',
-                      title: 'Success',
-                      body: 'Team saved successfully',
-                      autohide: true,
-                      delay: 1500
-                    });
-                  },
-                  error: function(xhr, status, error) {
-                    if(status != '200') {
-                      $(document).Toasts('create', {
-                      class: 'bg-danger',
-                      title: 'Error',
-                      body: 'Error saving team',
-                      autohide: true,
-                      delay: 1500
-                    });
-                    }
-                    
+    // Bind once up front: when a user is selected, assign them and update the list
+    $('#userSelect').on('select2:select', function(e) {
+      var user     = e.params.data;
+      var userId   = user.id;
+      var username = user.text;
+
+      // 1) POST to map the user
+      $.post('/cms/api/userTeam/' + userId + '/' + $('#teamSelect').val())
+              .done(function() {
+                $(document).Toasts('create', {
+                  class: 'bg-success',
+                  title: 'Assigned',
+                  body: username + ' added',
+                  autohide: true,
+                  delay: 1500
+                });
+              })
+              .fail(function() {
+                $(document).Toasts('create', {
+                  class: 'bg-danger',
+                  title: 'Error',
+                  body: 'Could not assign ' + username,
+                  autohide: true,
+                  delay: 1500
+                });
+              });
+
+      // 2) Add them to the UI list
+      var $li = $('<li>')
+              .addClass('list-group-item d-flex justify-content-between')
+              .attr('data-id', userId)
+              .text(username);
+
+      var $btn = $('<button>')
+              .addClass('btn btn-danger btn-sm')
+              .text('Remove')
+              .on('click', function() {
+                $.ajax({
+                  url: '/cms/api/userTeam/' + userId + '/' + $('#teamSelect').val(),
+                  method: 'DELETE'
+                }).done(function() {
+                  $li.remove();
+                  if (!$('#userList li').length) {
+                    $('#userList').append(
+                            '<li class="list-group-item"><strong>No users mapped to this team.</strong></li>'
+                    );
                   }
                 });
+              });
 
-              var removeButton = $('<button class="btn btn-danger btn-sm ml-2 float-right rmv-mapping">Remove</button>');
-              userItem.append(removeButton);
-              if ($('#userList li').length == 0) {
-                $('#userList').html("");
-              }
-              $('#userList').append(userItem);
-
-
+      $li.append($btn);
+      if (!$('#userList li').length) $('#userList').empty();
+      $('#userList').append($li);
     });
 
-    $(document).ready(function() {
 
-      // Delegate event for Edit team buttons
-      $('#teamTable tbody').on('click', '.editTeamBtn', function() {
-        var teamId = $(this).attr("data-id");
-        $.ajax({
-          url: "/api/team/" + teamId,  // Assumes GET returns team details in JSON
-          type: 'GET',
-          dataType: 'json',
-          success: function(res) {
-            // Populate modal fields with team data
-            $('#teamModalLabel').text("Edit Team: " + res.name);
-            $('#teamId').val(res.id);
-            $('#teamName').val(res.name);
-            $('#teamDescription').val(res.description);
-            $('#teamModal').modal('show');
-          },
-          error: function(xhr, status, error) {
-            console.error("Error retrieving team data:", error);
-          }
-        });
+    $('#teamTable tbody').on('click', '.editTeamBtn', function() {
+      var teamId = $(this).attr("data-id");
+      $.ajax({
+        url: "/cms/api/team/" + teamId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(res) {
+          $('#teamModalLabel').text("Edit Team: " + res.name);
+          $('#teamId').val(res.id);
+          $('#teamName').val(res.name);
+          $('#teamDescription').val(res.description);
+          $('#teamModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+          console.error("Error retrieving team data:", error);
+        }
       });
+    });
 
-      // Delegate event for Delete team buttons
-      $('#teamTable tbody').on('click', '.deleteTeamBtn', function() {
-        var teamId = $(this).attr("data-id");
-        if (confirm("Are you sure you want to delete this team?")) {
-          $.ajax({
-            url: "/api/team/" + teamId,  // Assumes DELETE endpoint for team admin
-            type: 'DELETE',
-            success: function(response) {
-              $(document).Toasts('create', {
-                class: 'bg-success',
-                title: 'Deleted',
-                body: 'Team deleted successfully',
-                autohide: true,
-                delay: 1500
-              });
-              // Reload the team table (assuming your DataTable instance variable is "table")
-              $('#teamTable').DataTable().ajax.reload(null, false);
-            },
-            error: function(xhr, status, error) {
-              $(document).Toasts('create', {
-                class: 'bg-danger',
-                title: 'Error',
-                body: 'Error deleting team',
-                autohide: true,
-                delay: 1500
-              });
-            }
+    $('#teamTable tbody').on('click', '.deleteTeamBtn', function() {
+      var teamId = $(this).attr("data-id");
+      confirmationBox(deleteTeam, teamId);
+    });
+
+    function deleteTeam(teamId) {
+      $.ajax({
+        url: "/cms/api/team/" + teamId,
+        type: 'DELETE',
+        success: function(response) {
+          $(document).Toasts('create', {
+            class: 'bg-success',
+            title: 'Deleted',
+            body: 'Team deleted successfully',
+            autohide: true,
+            delay: 1500
+          });
+          $('#teamTable').DataTable().ajax.reload(null, false);
+        },
+        error: function(xhr, status, error) {
+          $(document).Toasts('create', {
+            class: 'bg-danger',
+            title: 'Error',
+            body: 'Error deleting team',
+            autohide: true,
+            delay: 1500
           });
         }
       });
+    }
 
-      $('#teamTable tbody').on('click', '.assignBtn', function() { 
-        setTeamAndOpenModal( $(this).attr("data-id"));
-       });
+    $('#teamTable tbody').on('click', '.assignBtn', function() {
+      const teamId   = $(this).data('id');
+      const teamName = $(this).data('name');
+      setTeamAndOpenModal(teamId, teamName);
+    });
 
-       
-      
 
-      // Open modal for adding a new team
-      $("#addTeamBtn").click(function(){
-        $('#teamModalLabel').text("New Team");
-        // Clear the form fields
-        $('#teamForm')[0].reset();
-        $('#teamId').val('');
-        $('#teamModal').modal('show');
-      });
+    $("#addTeamBtn").click(function(){
+      $('#teamModalLabel').text("New Team");
+      $('#teamForm')[0].reset();
+      $('#teamId').val('');
+      $('#teamModal').modal('show');
+    });
 
-      // When the Save Changes button is clicked in the team modal
-      $("#saveTeamBtn").click(function() {
-        var teamData = {
-          name: $('#teamName').val(),
-          description: $('#teamDescription').val()
-        };
-        var teamId = $('#teamId').val();
-        // If editing, include the team ID (for simplicity, using POST for both create/update)
-        if (teamId && teamId !== "") {
-          teamData.id = teamId;
+    $("#saveTeamBtn").click(function() {
+      if (!validateTeamForm()) {
+        return;
+      }
+      var teamData = {
+        name: $('#teamName').val(),
+        description: $('#teamDescription').val()
+      };
+      var teamId = $('#teamId').val();
+      if (teamId && teamId !== "") {
+        teamData.id = teamId;
+      }
+      teamData.org = { id: orgId };
+      $.ajax({
+        url: "/cms/api/team",
+        type: 'POST',
+        data: JSON.stringify(teamData),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function(res) {
+          $('#teamModal').modal('hide');
+          $(document).Toasts('create', {
+            class: 'bg-success',
+            title: 'Success',
+            body: 'Team saved successfully',
+            autohide: true,
+            delay: 1500
+          });
+          $('#teamTable').DataTable().ajax.reload(null, false);
+        },
+        error: function(xhr, status, error) {
+          $(document).Toasts('create', {
+            class: 'bg-danger',
+            title: 'Error',
+            body: 'Error saving team',
+            autohide: true,
+            delay: 1500
+          });
         }
-        teamData.org = {id:orgId};
-        $.ajax({
-          url: "/api/team",  // Endpoint to save team for organization admin
-          type: 'POST',
-          data: JSON.stringify(teamData),
-          contentType: 'application/json',
-          dataType: 'json',
-          success: function(res) {
-            $('#teamModal').modal('hide');
-            $(document).Toasts('create', {
-              class: 'bg-success',
-              title: 'Success',
-              body: 'Team saved successfully',
-              autohide: true,
-              delay: 1500
-            });
-            // Reload the team DataTable
-            $('#teamTable').DataTable().ajax.reload(null, false);
-          },
-          error: function(xhr, status, error) {
-            $(document).Toasts('create', {
-              class: 'bg-danger',
-              title: 'Error',
-              body: 'Error saving team',
-              autohide: true,
-              delay: 1500
-            });
-          }
-        });
       });
+    });
 
-      // Optionally, clear form fields when modal is hidden
-      $('#teamModal').on('hidden.bs.modal', function () {
-        $('#teamForm')[0].reset();
-        $('#teamId').val('');
-      });
+    $('#teamModal').on('hidden.bs.modal', function () {
+      $('#teamForm')[0].reset();
+      $('#teamId').val('');
     });
   });
 </script>

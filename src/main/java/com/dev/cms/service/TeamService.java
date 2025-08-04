@@ -24,9 +24,12 @@ public interface TeamService extends JpaRepository<Team, Integer> {
     @Transactional
     @Query("UPDATE Team o SET o.isActive = :isActive WHERE o.id = :id")
     int updateIsActiveById(@Param("id") Integer id, @Param("isActive") Boolean isActive);
+
     @Query("SELECT t FROM Team t WHERE t.org.id = :orgId AND t.isActive = :isActive")
     List<Team> findTeamsByOrgIdAndIsActive(@Param("orgId") Integer orgId, @Param("isActive") Boolean isActive);
 
+    @Query("SELECT t FROM Team t WHERE t.org.id = :orgId AND t.isActive = :isActive AND t.isDefault = :isDefault")
+    List<Team> findTeamsByOrgIdAndIsActiveAndIsDefault(@Param("orgId") Integer orgId, @Param("isActive") Boolean isActive, @Param("isDefault") Byte isDefault);
 
 
 }

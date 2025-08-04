@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -63,14 +61,22 @@ public class EventController {
         post.setContent("{\"desc\":\"" + e.getDescription() + "\", \"from\":\"" + Utils.formatInstant(e.getStartAt()) + "\",\"to\":\"" + Utils.formatInstant(e.getEndAt())+"\"}");
         post.setAuthor(e.getCreatedBy());
         post.setCreatedAt(Instant.now());
+        post.setCreatedAt(Instant.now());
+        post.setCComment(Integer.valueOf(0));
+        post.setCUpvote(Integer.valueOf(0));
+        post.setCDownvote(Integer.valueOf(0));
         post.setTeam(e.getTeam());
         postService.save(post);
         return e;
     }
 
     
-    @GetMapping("/calendar")
-    public List<Event> calendar() {
-        return eventService.findAll();
+    @PostMapping("/calendar")
+    public List<Event> calendar(@RequestBody Integer[] groupIds) {
+         List<Event> finalList = new ArrayList<Event>();
+        for (int i = 0; i < groupIds.length; i++) {
+            finalList.addAll( eventService.findByTeam(groupIds[i]));
+        }
+        return finalList;
     }
 }
